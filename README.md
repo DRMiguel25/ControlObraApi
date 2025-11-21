@@ -99,60 +99,84 @@ El ciclo de prueba verifica la **Integridad de Datos** y la **Lógica Predictiva
 
 ## 📊 Diagrama de Flujo del Sistema
 
-El siguiente diagrama ilustra el flujo completo de operaciones del sistema, desde la gestión de proyectos hasta el análisis inteligente de desviaciones presupuestales.
+El siguiente diagrama ilustra el flujo completo de operaciones del sistema, organizado en cuatro módulos principales.
 
 ```mermaid
 graph TD
-    A[Inicio] --> B[Cliente / Usuario]
-    B --> C{Gestión de Proyectos}
+    Start([Inicio]) --> User[Cliente / Usuario]
     
-    C -->|POST /Proyectos| D[Crear Proyecto]
-    C -->|GET /Proyectos| E[Listar Proyectos]
+    User -->|Solicitud HTTP| API[ControlObraApi]
     
-    D --> F[ControlObraApi]
-    E --> F
+    subgraph Gestión["🏗️ Gestión de Proyectos"]
+        CreateP[Crear Proyecto<br/>POST /Proyectos]
+        ListP[Listar Proyectos<br/>GET /Proyectos]
+    end
     
-    F --> G[Base de Datos]
+    subgraph Planning["💰 Planeación Financiera"]
+        AddEst[Agregar Estimación de Costo<br/>POST /Estimaciones<br/>Concepto y Monto Estimado]
+    end
     
-    C -->|Planeación Financiera| H[POST /Estimaciones]
-    H -->|Concepto y Monto Estimado| I[Agregar Estimación de Costo]
-    I --> G
+    subgraph Execution["⚙️ Ejecución y Control"]
+        RegAvance[Registrar Avance de Obra<br/>POST /Avances<br/>% Físico y $ Ejecutado]
+    end
     
-    C -->|Ejecución y Control| J[POST /Avances]
-    J -->|% Físico y $ Ejecutado| K[Registrar Avance de Obra]
-    K --> G
+    subgraph Analysis["📈 Análisis Inteligente"]
+        CalcDesv[Calcular Desviación<br/>GET /Desviacion/id]
+        GetData[Obtener Datos de<br/>Estimaciones y Avances]
+        Algorithm[Aplicar Algoritmo<br/>de Proyección<br/>Fórmula: Costo Final = Gastado / %Avance]
+        Decision{¿Desviación > 5%?}
+        RiskHigh[Riesgo: ALTO]
+        RiskLow[Riesgo: BAJO/MEDIO]
+    end
     
-    C -->|Análisis Inteligente| L[GET /Desviacion/id]
-    L --> M[Calcular Desviación]
+    API --> CreateP
+    API --> ListP
+    API --> AddEst
+    API --> RegAvance
+    API --> CalcDesv
     
-    M --> N[Obtener Datos de Estimaciones y Avances]
-    N --> G
-    G --> O[Aplicar Algoritmo de Proyección]
-    O -->|Fórmula: Costo Final = Gastado / %Avance| P{¿Desviación > 5%?}
+    CreateP --> DB[(Base de Datos)]
+    ListP --> DB
+    AddEst --> DB
+    RegAvance --> DB
     
-    P -->|Sí| Q[Riesgo: ALTO]
-    P -->|No| R[Riesgo: BAJO/MEDIO]
+    CalcDesv --> GetData
+    GetData --> DB
+    DB --> Algorithm
+    Algorithm --> Decision
     
-    Q --> S[Respuesta JSON con Alerta]
-    R --> S
+    Decision -->|Sí| RiskHigh
+    Decision -->|No| RiskLow
     
-    S --> T[Fin]
+    RiskHigh --> Response[Respuesta JSON con Alerta]
+    RiskLow --> Response
     
-    style A fill:#e1f5e1
-    style T fill:#ffe1e1
-    style Q fill:#ffcccc
-    style R fill:#ccffcc
-    style F fill:#cce5ff
-    style G fill:#fff4cc
+    Response --> End([Fin])
+    
+    style Start fill:#90EE90
+    style End fill:#FFB6C1
+    style API fill:#87CEEB
+    style DB fill:#FFD700
+    style Decision fill:#DDA0DD
+    style RiskHigh fill:#FF6B6B
+    style RiskLow fill:#4ECDC4
 ```
 
-### Descripción del Flujo
+### Descripción de los Módulos
 
-1. **Gestión de Proyectos**: Creación y listado de proyectos de construcción.
-2. **Planeación Financiera**: Registro de estimaciones de costo por concepto (partidas presupuestales).
-3. **Ejecución y Control**: Registro de avances físicos y financieros de la obra.
-4. **Análisis Inteligente**: 
-   - Cálculo predictivo del costo final proyectado
-   - Fórmula: `Costo Final = Monto Ejecutado / Porcentaje de Avance`
-   - Evaluación de riesgo basada en la desviación presupuestal
-   - Alerta automática si la desviación supera el 5%
+#### 🏗️ Gestión de Proyectos
+- **Crear Proyecto** (`POST /Proyectos`): Registro inicial de la obra
+- **Listar Proyectos** (`GET /Proyectos`): Consulta de proyectos registrados
+
+#### 💰 Planeación Financiera
+- **Agregar Estimación de Costo** (`POST /Estimaciones`): Registro de partidas presupuestales con concepto y monto estimado
+
+#### ⚙️ Ejecución y Control
+- **Registrar Avance de Obra** (`POST /Avances`): Captura del porcentaje físico completado y monto ejecutado
+
+#### 📈 Análisis Inteligente
+- **Calcular Desviación** (`GET /Desviacion/{id}`): Motor predictivo que:
+  1. Obtiene datos históricos de estimaciones y avances
+  2. Aplica el algoritmo: `Costo Final Proyectado = Monto Ejecutado / Porcentaje de Avance`
+  3. Evalúa el riesgo de sobrecosto
+  4. Genera alertas automáticas si la desviación supera el 5%
