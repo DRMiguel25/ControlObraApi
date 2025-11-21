@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ControlObraApi")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+945e8021de299c8fbccaf133bfac29ca65758c5e")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c79463c55f020c47fa21626806fc48a57faf1985")]
 [assembly: System.Reflection.AssemblyProductAttribute("ControlObraApi")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ControlObraApi")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -1,4 +1,3 @@
-//AvancesControllers
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ControlObraApi.Models;
@@ -60,8 +59,9 @@ namespace ControlObraApi.Controllers
 
         // -----------------------------------------------------------------
         // GET: Buscar Avance por ID (R - READ)
+        // CORRECCIÓN CLAVE: Se especifica que el ID debe ser un entero
         // -----------------------------------------------------------------
-        [HttpGet("{id}")]
+        [HttpGet("{id:int}")]
         public async Task<IActionResult> GetAvanceObra(int id)
         {
             // Incluye la relación con EstimacionCosto para ver el contexto completo
@@ -92,8 +92,9 @@ namespace ControlObraApi.Controllers
 
         // -----------------------------------------------------------------
         // PUT: Actualización Completa (U - UPDATE)
+        // CORRECCIÓN CLAVE: Se especifica que el ID debe ser un entero
         // -----------------------------------------------------------------
-        [HttpPut("{id}")]
+        [HttpPut("{id:int}")]
         public async Task<IActionResult> PutAvanceObra(int id, [FromBody] AvanceObra avance)
         {
             if (id != avance.AvanceID)
@@ -128,8 +129,9 @@ namespace ControlObraApi.Controllers
 
         // -----------------------------------------------------------------
         // PATCH: Actualización Parcial (U - UPDATE Parcial)
+        // CORRECCIÓN CLAVE: Se especifica que el ID debe ser un entero
         // -----------------------------------------------------------------
-        [HttpPatch("{id}")]
+        [HttpPatch("{id:int}")]
         public async Task<IActionResult> PatchAvanceObra(int id, [FromBody] AvancePatchDTO patchDto)
         {
             var avance = await _context.AvancesObra.FindAsync(id);
@@ -165,8 +167,9 @@ namespace ControlObraApi.Controllers
 
         // -----------------------------------------------------------------
         // DELETE: Eliminar Avance (D - DELETE)
+        // CORRECCIÓN CLAVE: Se especifica que el ID debe ser un entero
         // -----------------------------------------------------------------
-        [HttpDelete("{id}")]
+        [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteAvanceObra(int id)
         {
             var avance = await _context.AvancesObra.FindAsync(id);
@@ -184,8 +187,9 @@ namespace ControlObraApi.Controllers
 
         // -----------------------------------------------------------------
         // GET: Obtener Avances por Estimación (Query personalizado)
+        // CORRECCIÓN CLAVE: Se especifica que el ID debe ser un entero
         // -----------------------------------------------------------------
-        [HttpGet("porEstimacion/{costoId}")]
+        [HttpGet("porEstimacion/{costoId:int}")]
         public async Task<IActionResult> GetAvancesPorEstimacion(int costoId)
         {
             var avances = await _context.AvancesObra

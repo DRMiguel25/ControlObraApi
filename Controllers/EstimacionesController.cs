@@ -1,4 +1,3 @@
-//EStimacionesControllers
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ControlObraApi.Models;
@@ -53,8 +52,9 @@ namespace ControlObraApi.Controllers
         
         // -----------------------------------------------------------------
         // GET: Buscar Estimacion por ID (R - READ)
+        // CORRECCIÓN CLAVE: Se especifica que el ID debe ser un entero
         // -----------------------------------------------------------------
-        [HttpGet("{id}")]
+        [HttpGet("{id:int}")]
         public async Task<IActionResult> GetEstimacionCosto(int id)
         {
             var estimacion = await _context.EstimacionesCosto
@@ -71,8 +71,9 @@ namespace ControlObraApi.Controllers
 
         // -----------------------------------------------------------------
         // PUT: Actualizacion Completa (U - UPDATE Total)
+        // CORRECCIÓN CLAVE: Se especifica que el ID debe ser un entero
         // -----------------------------------------------------------------
-        [HttpPut("{id}")]
+        [HttpPut("{id:int}")]
         public async Task<IActionResult> PutEstimacionCosto(int id, [FromBody] EstimacionCosto estimacion)
         {
             if (id != estimacion.CostoID)
@@ -106,8 +107,9 @@ namespace ControlObraApi.Controllers
 
         // -----------------------------------------------------------------
         // PATCH: Ajuste Parcial de Presupuesto (U - Eficiente con DTO)
+        // CORRECCIÓN CLAVE: Se especifica que el ID debe ser un entero
         // -----------------------------------------------------------------
-        [HttpPatch("{id}")]
+        [HttpPatch("{id:int}")]
         public async Task<IActionResult> PatchEstimacionCosto(int id, [FromBody] EstimacionPatchDTO patchDto)
         {
             var estimacionModelo = await _context.EstimacionesCosto.FindAsync(id);
@@ -138,8 +140,9 @@ namespace ControlObraApi.Controllers
 
         // -----------------------------------------------------------------
         // DELETE: Eliminar Estimacion (CON VALIDACION MEJORADA)
+        // CORRECCIÓN CLAVE: Se especifica que el ID debe ser un entero
         // -----------------------------------------------------------------
-        [HttpDelete("{id}")]
+        [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteEstimacionCosto(int id)
         {
             var estimacion = await _context.EstimacionesCosto

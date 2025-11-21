@@ -1,4 +1,3 @@
-//ProyectosController
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ControlObraApi.Models;
@@ -22,8 +21,9 @@ namespace ControlObraApi.Controllers
 
         // -----------------------------------------------------------------
         // GET: Obtener Proyecto por ID con sus Estimaciones
+        // CORRECCIÓN CLAVE: Se especifica que el ID debe ser un entero
         // -----------------------------------------------------------------
-        [HttpGet("{id}")]
+        [HttpGet("{id:int}")] 
         public async Task<IActionResult> GetProyecto(int id)
         {
             var proyecto = await _context.Proyectos
@@ -40,7 +40,7 @@ namespace ControlObraApi.Controllers
         }
 
         // -----------------------------------------------------------------
-        // GET: Obtener todos los Proyectos
+        // GET: Obtener todos los Proyectos (Ruta base sin ID)
         // -----------------------------------------------------------------
         [HttpGet]
         public async Task<IActionResult> GetProyectos()
@@ -65,8 +65,9 @@ namespace ControlObraApi.Controllers
 
         // -----------------------------------------------------------------
         // PUT: Actualizar Proyecto Completo
+        // CORRECCIÓN CLAVE: Se especifica que el ID debe ser un entero
         // -----------------------------------------------------------------
-        [HttpPut("{id}")]
+        [HttpPut("{id:int}")]
         public async Task<IActionResult> PutProyecto(int id, [FromBody] Proyecto proyecto)
         {
             if (id != proyecto.ProyectoID)
@@ -98,8 +99,9 @@ namespace ControlObraApi.Controllers
 
         // -----------------------------------------------------------------
         // PATCH: Actualizar Proyecto Parcial
+        // CORRECCIÓN CLAVE: Se especifica que el ID debe ser un entero
         // -----------------------------------------------------------------
-        [HttpPatch("{id}")]
+        [HttpPatch("{id:int}")]
         public async Task<IActionResult> PatchProyecto(int id, [FromBody] ProyectoPatchDTO patchDto)
         {
             var proyecto = await _context.Proyectos.FindAsync(id);
@@ -130,8 +132,9 @@ namespace ControlObraApi.Controllers
 
         // -----------------------------------------------------------------
         // DELETE: Eliminar Proyecto (CON VALIDACION MEJORADA)
+        // CORRECCIÓN CLAVE: Se especifica que el ID debe ser un entero
         // -----------------------------------------------------------------
-        [HttpDelete("{id}")]
+        [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteProyecto(int id)
         {
             var proyecto = await _context.Proyectos
@@ -162,9 +165,9 @@ namespace ControlObraApi.Controllers
 
         // -----------------------------------------------------------------
         // ENDPOINT DIFERENCIADOR: Analisis de Desviacion Presupuestal
-        // Logica Algoritmica (Formula EAC)
+        // CORRECCIÓN CLAVE: Se especifica que el ID debe ser un entero
         // -----------------------------------------------------------------
-        [HttpGet("Desviacion/{proyectoId}")]
+        [HttpGet("Desviacion/{proyectoId:int}")]
         public async Task<IActionResult> GetDesviacionFinanciera(int proyectoId)
         {
             var estimacionesConAvances = await _context.EstimacionesCosto
