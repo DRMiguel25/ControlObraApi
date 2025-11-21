@@ -94,3 +94,65 @@ El ciclo de prueba verifica la **Integridad de Datos** y la **Lógica Predictiva
 | **6** | **Actualización Parcial (`PATCH`)** | **`PATCH`** | `/Estimaciones/1` | `[{"op": "replace", "path": "/montoEstimado", "value": 250000.00}]` | **`200 OK`**. Solo el `MontoEstimado` debe cambiar a $250,000.00 (demuestra el uso del DTO). |
 | **7** | **Eliminación Segura** | **`DELETE`** | `/Avances/1` | *None* | **`204 No Content`**. (Elimina el registro de avance antes de borrar el presupuesto). |
 | **8** | **Eliminar Presupuesto** | **`DELETE`** | `/Estimaciones/1` | *None* | **`204 No Content`**. (Elimina el registro final). |
+
+---
+
+## 📊 Diagrama de Flujo del Sistema
+
+El siguiente diagrama ilustra el flujo completo de operaciones del sistema, desde la gestión de proyectos hasta el análisis inteligente de desviaciones presupuestales.
+
+```mermaid
+graph TD
+    A[Inicio] --> B[Cliente / Usuario]
+    B --> C{Gestión de Proyectos}
+    
+    C -->|POST /Proyectos| D[Crear Proyecto]
+    C -->|GET /Proyectos| E[Listar Proyectos]
+    
+    D --> F[ControlObraApi]
+    E --> F
+    
+    F --> G[Base de Datos]
+    
+    C -->|Planeación Financiera| H[POST /Estimaciones]
+    H -->|Concepto y Monto Estimado| I[Agregar Estimación de Costo]
+    I --> G
+    
+    C -->|Ejecución y Control| J[POST /Avances]
+    J -->|% Físico y $ Ejecutado| K[Registrar Avance de Obra]
+    K --> G
+    
+    C -->|Análisis Inteligente| L[GET /Desviacion/id]
+    L --> M[Calcular Desviación]
+    
+    M --> N[Obtener Datos de Estimaciones y Avances]
+    N --> G
+    G --> O[Aplicar Algoritmo de Proyección]
+    O -->|Fórmula: Costo Final = Gastado / %Avance| P{¿Desviación > 5%?}
+    
+    P -->|Sí| Q[Riesgo: ALTO]
+    P -->|No| R[Riesgo: BAJO/MEDIO]
+    
+    Q --> S[Respuesta JSON con Alerta]
+    R --> S
+    
+    S --> T[Fin]
+    
+    style A fill:#e1f5e1
+    style T fill:#ffe1e1
+    style Q fill:#ffcccc
+    style R fill:#ccffcc
+    style F fill:#cce5ff
+    style G fill:#fff4cc
+```
+
+### Descripción del Flujo
+
+1. **Gestión de Proyectos**: Creación y listado de proyectos de construcción.
+2. **Planeación Financiera**: Registro de estimaciones de costo por concepto (partidas presupuestales).
+3. **Ejecución y Control**: Registro de avances físicos y financieros de la obra.
+4. **Análisis Inteligente**: 
+   - Cálculo predictivo del costo final proyectado
+   - Fórmula: `Costo Final = Monto Ejecutado / Porcentaje de Avance`
+   - Evaluación de riesgo basada en la desviación presupuestal
+   - Alerta automática si la desviación supera el 5%
