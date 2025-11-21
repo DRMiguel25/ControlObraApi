@@ -1,0 +1,6 @@
+@ControlObraApi_HostAddress = http://localhost:5119
+
+GET {{ControlObraApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
