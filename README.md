@@ -44,7 +44,6 @@ dotnet restore
 Tu proyecto usa la clave `ConexionSQL` para la base de datos `ControlObraDB`.
 
 ```json
-// Fragmento de appsettings.json
 "ConnectionStrings": {
   "ConexionSQL": "Server=localhost, 1433;Database=ControlObraDB;User Id=sa;Password=Admin12345;TrustServerCertificate=True"
 }
