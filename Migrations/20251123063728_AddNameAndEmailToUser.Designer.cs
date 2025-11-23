@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ControlObraApi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251117231705_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20251123063728_AddNameAndEmailToUser")]
+    partial class AddNameAndEmailToUser
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -50,6 +50,24 @@ namespace ControlObraApi.Migrations
                     b.HasIndex("CostoID");
 
                     b.ToTable("AvancesObra");
+
+                    b.HasData(
+                        new
+                        {
+                            AvanceID = 1,
+                            CostoID = 1,
+                            FechaRegistro = new DateTime(2025, 11, 13, 0, 37, 27, 715, DateTimeKind.Local).AddTicks(5176),
+                            MontoEjecutado = 75000.00m,
+                            PorcentajeCompletado = 50.00m
+                        },
+                        new
+                        {
+                            AvanceID = 2,
+                            CostoID = 2,
+                            FechaRegistro = new DateTime(2025, 11, 18, 0, 37, 27, 715, DateTimeKind.Local).AddTicks(5184),
+                            MontoEjecutado = 10000.00m,
+                            PorcentajeCompletado = 20.00m
+                        });
                 });
 
             modelBuilder.Entity("ControlObraApi.Models.EstimacionCosto", b =>
@@ -62,7 +80,8 @@ namespace ControlObraApi.Migrations
 
                     b.Property<string>("Concepto")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                     b.Property<decimal>("MontoEstimado")
                         .HasColumnType("decimal(18,2)");
@@ -72,7 +91,6 @@ namespace ControlObraApi.Migrations
 
                     b.Property<byte[]>("RowVersion")
                         .IsConcurrencyToken()
-                        .IsRequired()
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("rowversion");
 
@@ -81,6 +99,22 @@ namespace ControlObraApi.Migrations
                     b.HasIndex("ProyectoID");
 
                     b.ToTable("EstimacionesCosto");
+
+                    b.HasData(
+                        new
+                        {
+                            CostoID = 1,
+                            Concepto = "Cimentación y Estructura",
+                            MontoEstimado = 150000.00m,
+                            ProyectoID = 2
+                        },
+                        new
+                        {
+                            CostoID = 2,
+                            Concepto = "Instalaciones Eléctricas",
+                            MontoEstimado = 45000.00m,
+                            ProyectoID = 2
+                        });
                 });
 
             modelBuilder.Entity("ControlObraApi.Models.Proyecto", b =>
@@ -105,6 +139,51 @@ namespace ControlObraApi.Migrations
                     b.HasKey("ProyectoID");
 
                     b.ToTable("Proyectos");
+
+                    b.HasData(
+                        new
+                        {
+                            ProyectoID = 2,
+                            FechaInicio = new DateTime(2025, 1, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            NombreObra = "Torre Residencial Alpha",
+                            Ubicacion = "Zona Central"
+                        });
+                });
+
+            modelBuilder.Entity("ControlObraApi.Models.User", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Email")
+                        .IsUnique();
+
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("ControlObraApi.Models.AvanceObra", b =>

@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "/home/migue/Documentos/materias/PROYECTOFINALPETER/ControlObraApi/ControlObraApi/ControlObraApi.csproj": {}
+    "/home/migue/Documentos/materias/sistemas propietarios/tercero/ControlObraApi/ControlObraApi/ControlObraApi.csproj": {}
   },
   "projects": {
-    "/home/migue/Documentos/materias/PROYECTOFINALPETER/ControlObraApi/ControlObraApi/ControlObraApi.csproj": {
+    "/home/migue/Documentos/materias/sistemas propietarios/tercero/ControlObraApi/ControlObraApi/ControlObraApi.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/migue/Documentos/materias/PROYECTOFINALPETER/ControlObraApi/ControlObraApi/ControlObraApi.csproj",
+        "projectUniqueName": "/home/migue/Documentos/materias/sistemas propietarios/tercero/ControlObraApi/ControlObraApi/ControlObraApi.csproj",
         "projectName": "ControlObraApi",
-        "projectPath": "/home/migue/Documentos/materias/PROYECTOFINALPETER/ControlObraApi/ControlObraApi/ControlObraApi.csproj",
+        "projectPath": "/home/migue/Documentos/materias/sistemas propietarios/tercero/ControlObraApi/ControlObraApi/ControlObraApi.csproj",
         "packagesPath": "/home/migue/.nuget/packages/",
-        "outputPath": "/home/migue/Documentos/materias/PROYECTOFINALPETER/ControlObraApi/ControlObraApi/obj/",
+        "outputPath": "/home/migue/Documentos/materias/sistemas propietarios/tercero/ControlObraApi/ControlObraApi/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/home/migue/.nuget/NuGet/NuGet.Config"
@@ -43,9 +43,17 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "dependencies": {
+            "BCrypt.Net-Next": {
+              "target": "Package",
+              "version": "[4.0.3, )"
+            },
             "FluentValidation.AspNetCore": {
               "target": "Package",
               "version": "[11.3.1, )"
+            },
+            "Microsoft.AspNetCore.Authentication.JwtBearer": {
+              "target": "Package",
+              "version": "[8.0.0, )"
             },
             "Microsoft.AspNetCore.Mvc.NewtonsoftJson": {
               "target": "Package",

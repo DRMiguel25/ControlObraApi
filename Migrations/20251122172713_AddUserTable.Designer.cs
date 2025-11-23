@@ -4,6 +4,7 @@ using ControlObraApi.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ControlObraApi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251122172713_AddUserTable")]
+    partial class AddUserTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -53,7 +56,7 @@ namespace ControlObraApi.Migrations
                         {
                             AvanceID = 1,
                             CostoID = 1,
-                            FechaRegistro = new DateTime(2025, 11, 13, 0, 37, 27, 715, DateTimeKind.Local).AddTicks(5176),
+                            FechaRegistro = new DateTime(2025, 11, 12, 11, 27, 13, 438, DateTimeKind.Local).AddTicks(6998),
                             MontoEjecutado = 75000.00m,
                             PorcentajeCompletado = 50.00m
                         },
@@ -61,7 +64,7 @@ namespace ControlObraApi.Migrations
                         {
                             AvanceID = 2,
                             CostoID = 2,
-                            FechaRegistro = new DateTime(2025, 11, 18, 0, 37, 27, 715, DateTimeKind.Local).AddTicks(5184),
+                            FechaRegistro = new DateTime(2025, 11, 17, 11, 27, 13, 438, DateTimeKind.Local).AddTicks(7003),
                             MontoEjecutado = 10000.00m,
                             PorcentajeCompletado = 20.00m
                         });
@@ -155,14 +158,6 @@ namespace ControlObraApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("PasswordHash")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -176,9 +171,6 @@ namespace ControlObraApi.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("Email")
-                        .IsUnique();
 
                     b.ToTable("Users");
                 });

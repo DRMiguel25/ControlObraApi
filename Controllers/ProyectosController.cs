@@ -177,12 +177,29 @@ namespace ControlObraApi.Controllers
 
             if (!estimacionesConAvances.Any())
             {
-                return NotFound($"Proyecto con ID {proyectoId} o sus estimaciones no encontradas.");
+                // CORRECCIÓN: Retornar 200 OK con estado "SIN DATA" en lugar de 404
+                return Ok(new 
+                { 
+                    Riesgo = "SIN DATA", 
+                    Mensaje = "No hay estimaciones registradas para este proyecto.", 
+                    CostoEstimado = 0 
+                });
             }
 
             decimal presupuestoTotalEstimado = estimacionesConAvances.Sum(e => e.MontoEstimado);
             decimal costoEjecutadoTotal = estimacionesConAvances.SelectMany(e => e.Avances).Sum(a => a.MontoEjecutado);
             
+            // CORRECCIÓN: Manejar presupuesto 0 para evitar división por cero si fuera necesario en otros cálculos
+            if (presupuestoTotalEstimado == 0)
+            {
+                 return Ok(new 
+                { 
+                    Riesgo = "SIN PRESUPUESTO", 
+                    Mensaje = "El presupuesto estimado es 0, no se puede calcular desviación.", 
+                    CostoEstimado = 0 
+                });
+            }
+
             decimal totalAvance = estimacionesConAvances.Average(e => e.Avances.Any() ? e.Avances.Average(a => a.PorcentajeCompletado) : 0m);
             decimal avanceFisicoDecimal = totalAvance / 100.00m; 
 

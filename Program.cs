@@ -1,7 +1,10 @@
+// Program.cs (C# API - Versión FINAL y FUNCIONAL)
 using ControlObraApi.Models;
 using ControlObraApi.Validators;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Builder; 
+using System.Text.Json.Serialization; 
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,43 +16,50 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: MyAllowSpecificOrigins,
                       policy =>
                       {
-                          // Permitir peticiones desde tu Front-End de Angular
+                          // Permitir peticiones desde tu Front-End de Angular (http://localhost:4200)
                           policy.WithOrigins("http://localhost:4200") 
                                 .AllowAnyHeader()
                                 .AllowAnyMethod();
                       });
 });
 
-// ** 2. BASE DE DATOS (CORREGIDO Y OPTIMIZADO) **
+// A. Base de datos
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("ConexionSQL"), 
-        sqlOptions => {
-            // ESTO SOLUCIONA EL  WARNING DE RENDIMIENTO:
-            // Divide las consultas complejas (con muchos Includes) en varias consultas SQL pequeñas
-            // en lugar de una gigante, evitando datos duplicados y mejorando velocidad.
-            sqlOptions.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery);
-        }));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("ConexionSQL")));
 
-//  3. CONTROLADORES Y SERIALIZACIÓN JSON 
+// B. Controladores con configuración JSON
 builder.Services.AddControllers()
     .AddNewtonsoftJson(options =>
     {
-        // Ignorar referencias circulares (Indispensable para relaciones Padre-Hijo)
+        // Ignorar referencias circulares
         options.SerializerSettings.ReferenceLoopHandling = 
             Newtonsoft.Json.ReferenceLoopHandling.Ignore;
     });
 
-// 4. VALIDADORES (FLUENT VALIDATION) 
+// C. Validadores
 builder.Services.AddScoped<IValidator<EstimacionCosto>, EstimacionCostoValidator>();
 builder.Services.AddScoped<IValidator<AvanceObra>, AvanceObraValidator>();
 
-//  5. SWAGGER 
+// JWT Configuration
+builder.Services.AddAuthentication(Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(builder.Configuration.GetSection("AppSettings:Token").Value!)),
+            ValidateIssuer = false,
+            ValidateAudience = false
+        };
+    });
+
+// Swagger y servicios
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-//  6. PIPELINE DE MIDDLEWARES (ORDEN ESTRICTO) 
+// ** ORDEN DE MIDDLEWARES (CRÍTICO) **
 
 if (app.Environment.IsDevelopment())
 {
@@ -57,19 +67,17 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// A. Redirección HTTPS (Opcional, pero recomendado si no estás solo en local)
-// app.UseHttpsRedirection(); 
-
-// B. Routing
+// 1. USO DE ROUTING (Debe ir antes de CORS y Autorización)
 app.UseRouting();
 
-// C. CORS (Debe ir entre UseRouting y UseAuthorization)
+// 2. USO DE CORS (Debe ir DESPUÉS de UseRouting)
 app.UseCors(MyAllowSpecificOrigins);
 
-// D. Autorización
+// 3. AUTORIZACIÓN
+app.UseAuthentication();
 app.UseAuthorization();
 
-// E. Mapeo de Controladores
+// 4. MAPEO FINAL DE CONTROLADORES (Forma recomendada que resuelve el 404)
 app.MapControllers(); 
 
 app.Run();

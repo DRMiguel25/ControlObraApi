@@ -3,10 +3,12 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace ControlObraApi.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class InitialSetupWithData : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -32,10 +34,10 @@ namespace ControlObraApi.Migrations
                 {
                     CostoID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Concepto = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Concepto = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     MontoEstimado = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     ProyectoID = table.Column<int>(type: "int", nullable: false),
-                    RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false)
+                    RowVersion = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -68,6 +70,29 @@ namespace ControlObraApi.Migrations
                         principalTable: "EstimacionesCosto",
                         principalColumn: "CostoID",
                         onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.InsertData(
+                table: "Proyectos",
+                columns: new[] { "ProyectoID", "FechaInicio", "NombreObra", "Ubicacion" },
+                values: new object[] { 2, new DateTime(2025, 1, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), "Torre Residencial Alpha", "Zona Central" });
+
+            migrationBuilder.InsertData(
+                table: "EstimacionesCosto",
+                columns: new[] { "CostoID", "Concepto", "MontoEstimado", "ProyectoID" },
+                values: new object[,]
+                {
+                    { 1, "Cimentación y Estructura", 150000.00m, 2 },
+                    { 2, "Instalaciones Eléctricas", 45000.00m, 2 }
+                });
+
+            migrationBuilder.InsertData(
+                table: "AvancesObra",
+                columns: new[] { "AvanceID", "CostoID", "FechaRegistro", "MontoEjecutado", "PorcentajeCompletado" },
+                values: new object[,]
+                {
+                    { 1, 1, new DateTime(2025, 11, 11, 13, 10, 18, 649, DateTimeKind.Local).AddTicks(9882), 75000.00m, 50.00m },
+                    { 2, 2, new DateTime(2025, 11, 16, 13, 10, 18, 649, DateTimeKind.Local).AddTicks(9892), 10000.00m, 20.00m }
                 });
 
             migrationBuilder.CreateIndex(
