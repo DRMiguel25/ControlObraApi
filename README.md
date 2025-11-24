@@ -245,7 +245,27 @@ La API estará disponible en:
 
 ## 📚 Documentación de Endpoints
 
+> [!IMPORTANT]
+> **🔐 AUTENTICACIÓN JWT REQUERIDA**
+> 
+> Todos los endpoints excepto `/api/Auth/register` y `/api/Auth/login` requieren un token JWT válido en el header de autorización.
+> 
+> ```http
+> Authorization: Bearer {tu_token_jwt}
+> ```
+> 
+> **Pasos para autenticarte:**
+> 1. Registra un usuario con `POST /api/Auth/register` O inicia sesión con `POST /api/Auth/login`
+> 2. Copia el token de la respuesta
+> 3. Incluye el token en el header `Authorization: Bearer {token}` en todas las peticiones a endpoints protegidos
+> 4. El token es válido por 24 horas
+
+---
+
 ### 🔐 **Autenticación**
+
+> [!NOTE]
+> Los endpoints de autenticación son **públicos** y no requieren token.
 
 #### `POST /api/Auth/register` - Registrar Usuario
 
@@ -298,6 +318,11 @@ Autentica un usuario y genera un token JWT.
 ---
 
 ### 🏗️ **Proyectos**
+
+> [!WARNING]
+> **Todos los endpoints de Proyectos requieren autenticación JWT.**
+> 
+> Incluye el header: `Authorization: Bearer {tu_token}`
 
 #### `GET /api/Proyectos` - Listar Todos los Proyectos
 
@@ -450,6 +475,11 @@ Calcula la desviación financiera de un proyecto.
 
 ### 💰 **Estimaciones de Costo**
 
+> [!WARNING]
+> **Todos los endpoints de Estimaciones requieren autenticación JWT.**
+> 
+> Incluye el header: `Authorization: Bearer {tu_token}`
+
 #### `POST /api/Estimaciones` - Crear Estimación
 
 Crea una nueva estimación de costo para un proyecto.
@@ -547,6 +577,11 @@ Elimina una estimación (solo si no tiene avances).
 ---
 
 ### 📈 **Avances de Obra**
+
+> [!WARNING]
+> **Todos los endpoints de Avances requieren autenticación JWT.**
+> 
+> Incluye el header: `Authorization: Bearer {tu_token}`
 
 #### `POST /api/Avances` - Registrar Avance
 
@@ -679,6 +714,42 @@ Elimina un avance de obra.
 
 ## 🧪 Ejemplos de Uso en Postman
 
+### ⚙️ Configuración de JWT en Postman
+
+> [!TIP]
+> **Configurar el Token Globalmente en Postman**
+> 
+> Para no tener que copiar el token manualmente en cada petición:
+> 
+> 1. **Crea una Variable de Entorno:**
+>    - En Postman, ve a `Environments` → `Create Environment`
+>    - Nombra tu ambiente (ej: "ControlObra Local")
+>    - Agrega una variable: `jwt_token` (sin valor inicial)
+>    - Guarda el ambiente
+> 
+> 2. **Configura la Autenticación a Nivel de Colección:**
+>    - Crea o edita tu colección "ControlObraApi"
+>    - Ve a la pestaña `Authorization`
+>    - Selecciona `Type: Bearer Token`
+>    - En el campo Token escribe: `{{jwt_token}}`
+>    - Guarda los cambios
+> 
+> 3. **Guarda el Token Automáticamente al Hacer Login:**
+>    - En la petición `POST /api/Auth/login`
+>    - Ve a la pestaña `Tests`
+>    - Agrega este script:
+>      ```javascript
+>      var jsonData = pm.response.json();
+>      pm.environment.set("jwt_token", jsonData.token);
+>      ```
+>    - Ahora cada vez que hagas login, el token se guardará automáticamente
+> 
+> 4. **Usa el Ambiente:**
+>    - Selecciona tu ambiente "ControlObra Local" en el dropdown superior derecho
+>    - Todas las peticiones protegidas usarán automáticamente el token
+
+---
+
 ### Flujo Completo de Pruebas
 
 #### 1️⃣ Registrar Usuario
@@ -712,11 +783,12 @@ Content-Type: application/json
 
 ---
 
-#### 3️⃣ Crear un Proyecto
+#### 3️⃣ Crear un Proyecto (🔐 Requiere Token)
 
 ```
 POST https://localhost:7135/api/Proyectos
 Content-Type: application/json
+Authorization: Bearer {TU_TOKEN_AQUI}
 
 {
   "nombreObra": "Edificio Corporativo",
@@ -729,11 +801,12 @@ Content-Type: application/json
 
 ---
 
-#### 4️⃣ Crear Estimaciones de Costo
+#### 4️⃣ Crear Estimaciones de Costo (🔐 Requiere Token)
 
 ```
 POST https://localhost:7135/api/Estimaciones
 Content-Type: application/json
+Authorization: Bearer {TU_TOKEN_AQUI}
 
 {
   "concepto": "Excavación",
@@ -748,11 +821,12 @@ Repite para crear más estimaciones (ej: "Estructura", "Acabados").
 
 ---
 
-#### 5️⃣ Registrar Avances de Obra
+#### 5️⃣ Registrar Avances de Obra (🔐 Requiere Token)
 
 ```
 POST https://localhost:7135/api/Avances
 Content-Type: application/json
+Authorization: Bearer {TU_TOKEN_AQUI}
 
 {
   "montoEjecutado": 25000.00,
@@ -763,20 +837,22 @@ Content-Type: application/json
 
 ---
 
-#### 6️⃣ Consultar Desviación Financiera
+#### 6️⃣ Consultar Desviación Financiera (🔐 Requiere Token)
 
 ```
 GET https://localhost:7135/api/Proyectos/Desviacion/1
+Authorization: Bearer {TU_TOKEN_AQUI}
 ```
 
 Esta petición te mostrará el análisis de riesgo del proyecto.
 
 ---
 
-#### 7️⃣ Listar Todos los Proyectos
+#### 7️⃣ Listar Todos los Proyectos (🔐 Requiere Token)
 
 ```
 GET https://localhost:7135/api/Proyectos
+Authorization: Bearer {TU_TOKEN_AQUI}
 ```
 
 ---

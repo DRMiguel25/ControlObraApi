@@ -6,11 +6,13 @@ using FluentValidation;
 using FluentValidation.Results;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ControlObraApi.Controllers
 {
     [Route("api/Estimaciones")]
     [ApiController]
+    [Authorize]
     public class EstimacionesController : ControllerBase
     {
         private readonly AppDbContext _context;

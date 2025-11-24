@@ -7,11 +7,13 @@ using FluentValidation.Results;
 using System.Linq;
 using System.Threading.Tasks;
 using System;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ControlObraApi.Controllers
 {
     [Route("api/Avances")]
     [ApiController]
+    [Authorize]
     public class AvancesController : ControllerBase
     {
         private readonly AppDbContext _context;

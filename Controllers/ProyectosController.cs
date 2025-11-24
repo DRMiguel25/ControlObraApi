@@ -5,11 +5,13 @@ using ControlObraApi.DTOs;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ControlObraApi.Controllers
 {
     [Route("api/Proyectos")]
     [ApiController]
+    [Authorize]
     public class ProyectosController : ControllerBase
     {
         private readonly AppDbContext _context;
