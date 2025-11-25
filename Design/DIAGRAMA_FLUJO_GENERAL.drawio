@@ -1,0 +1,256 @@
+<mxfile host="app.diagrams.net" modified="2025-11-25T19:11:00.000Z" agent="DrawIO" version="22.1.0" etag="drawio-diagram" type="device">
+  <diagram name="ControlObraApi - Flujo General" id="control-obra-flow">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="3000" pageHeight="2000" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        
+        <!-- INICIO -->
+        <mxCell id="start" value="Usuario/Cliente" style="ellipse;whiteSpace=wrap;html=1;fillColor=#4CAF50;strokeColor=#2E7D32;fontColor=#FFFFFF;fontSize=14;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="1400" y="40" width="200" height="80" as="geometry" />
+        </mxCell>
+        
+        <!-- DECISIÓN: ¿Tiene cuenta? -->
+        <mxCell id="decision1" value="¿Tiene cuenta?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#9C27B0;strokeColor=#6A1B9A;fontColor=#FFFFFF;fontSize=12;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="1425" y="160" width="150" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="edge1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="start" target="decision1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <!-- FLUJO DE REGISTRO -->
+        <mxCell id="register" value="POST /api/Auth/register" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#4CAF50;strokeColor=#2E7D32;fontColor=#FFFFFF;fontSize=12;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="900" y="205" width="200" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="edge2" value="No" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=11;fontStyle=1" edge="1" parent="1" source="decision1" target="register">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="validateReg" value="Validar datos&#xa;RegisterDto" style="rhombus;whiteSpace=wrap;html=1;fillColor=#9C27B0;strokeColor=#6A1B9A;fontColor=#FFFFFF;fontSize=11" vertex="1" parent="1">
+          <mxGeometry x="925" y="305" width="150" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="edge3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="register" target="validateReg">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="regError" value="400 Bad Request&#xa;Errores de validación" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f44336;strokeColor=#c62828;fontColor=#FFFFFF;fontSize=11" vertex="1" parent="1">
+          <mxGeometry x="700" y="335" width="160" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="edge4" value="Inválido" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=10" edge="1" parent="1" source="validateReg" target="regError">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="hashPass" value="Hashear password&#xa;BCrypt factor 11" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2196F3;strokeColor=#1565C0;fontColor=#FFFFFF;fontSize=11" vertex="1" parent="1">
+          <mxGeometry x="925" y="465" width="150" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="edge5" value="Válido" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=10" edge="1" parent="1" source="validateReg" target="hashPass">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="saveUser" value="Guardar en DB&#xa;Tabla Users" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#FF9800;strokeColor=#E65100;fontColor=#FFFFFF;fontSize=11" vertex="1" parent="1">
+          <mxGeometry x="940" y="565" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="edge6" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="hashPass" target="saveUser">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="genToken1" value="Generar JWT Token&#xa;Claims: UserId, Email, Role" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#4CAF50;strokeColor=#2E7D32;fontColor=#FFFFFF;fontSize=11" vertex="1" parent="1">
+          <mxGeometry x="925" y="685" width="150" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="edge7" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="saveUser" target="genToken1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="returnToken1" value="200 OK&#xa;Token + User Info" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#8BC34A;strokeColor=#558B2F;fontColor=#FFFFFF;fontSize=11;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="925" y="785" width="150" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="edge8" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="genToken1" target="returnToken1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <!-- FLUJO DE LOGIN -->
+        <mxCell id="login" value="POST /api/Auth/login" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#4CAF50;strokeColor=#2E7D32;fontColor=#FFFFFF;fontSize=12;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="1700" y="205" width="200" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="edge9" value="Sí" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=11;fontStyle=1" edge="1" parent="1" source="decision1" target="login">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="validateLogin" value="Validar&#xa;LoginDto" style="rhombus;whiteSpace=wrap;html=1;fillColor=#9C27B0;strokeColor=#6A1B9A;fontColor=#FFFFFF;fontSize=11" vertex="1" parent="1">
+          <mxGeometry x="1735" y="305" width="130" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="edge10" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="login" target="validateLogin">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="loginError" value="400 Bad Request" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f44336;strokeColor=#c62828;fontColor=#FFFFFF;fontSize=11" vertex="1" parent="1">
+          <mxGeometry x="1950" y="335" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="edge11" value="Inválido" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=10" edge="1" parent="1" source="validateLogin" target="loginError">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="checkUser" value="¿Usuario&#xa;existe?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#9C27B0;strokeColor=#6A1B9A;fontColor=#FFFFFF;fontSize=11" vertex="1" parent="1">
+          <mxGeometry x="1735" y="465" width="130" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="edge12" value="Válido" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=10" edge="1" parent="1" source="validateLogin" target="checkUser">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="notFound" value="404 Not Found" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f44336;strokeColor=#c62828;fontColor=#FFFFFF;fontSize=11" vertex="1" parent="1">
+          <mxGeometry x="1950" y="485" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="edge13" value="No" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=10" edge="1" parent="1" source="checkUser" target="notFound">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="verifyPass" value="Verificar password&#xa;BCrypt.Verify" style="rhombus;whiteSpace=wrap;html=1;fillColor=#9C27B0;strokeColor=#6A1B9A;fontColor=#FFFFFF;fontSize=11" vertex="1" parent="1">
+          <mxGeometry x="1720" y="605" width="160" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="edge14" value="Sí" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=10" edge="1" parent="1" source="checkUser" target="verifyPass">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="unauthorized" value="401 Unauthorized" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f44336;strokeColor=#c62828;fontColor=#FFFFFF;fontSize=11" vertex="1" parent="1">
+          <mxGeometry x="1950" y="625" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="edge15" value="Incorrecto" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=10" edge="1" parent="1" source="verifyPass" target="unauthorized">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="genToken2" value="Generar JWT Token&#xa;Válido 24h" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#4CAF50;strokeColor=#2E7D32;fontColor=#FFFFFF;fontSize=11" vertex="1" parent="1">
+          <mxGeometry x="1725" y="745" width="150" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="edge16" value="Correcto" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=10" edge="1" parent="1" source="verifyPass" target="genToken2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="returnToken2" value="200 OK&#xa;Token JWT" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#8BC34A;strokeColor=#558B2F;fontColor=#FFFFFF;fontSize=11;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="1725" y="845" width="150" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="edge17" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="genToken2" target="returnToken2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <!-- USUARIO AUTENTICADO -->
+        <mxCell id="authenticated" value="Usuario Autenticado" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#4CAF50;strokeColor=#2E7D32;fontColor=#FFFFFF;fontSize=14;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="1350" y="950" width="300" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="edge18" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="returnToken1" target="authenticated">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1000" y="900" />
+              <mxPoint x="1350" y="900" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="edge19" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="returnToken2" target="authenticated">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1800" y="920" />
+              <mxPoint x="1600" y="920" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- MENÚ PRINCIPAL -->
+        <mxCell id="mainMenu" value="Seleccionar Servicio" style="rhombus;whiteSpace=wrap;html=1;fillColor=#9C27B0;strokeColor=#6A1B9A;fontColor=#FFFFFF;fontSize=13;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="1400" y="1080" width="200" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="edge20" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="authenticated" target="mainMenu">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <!-- SERVICIO: PROYECTOS -->
+        <mxCell id="proyMenu" value="Gestión de Proyectos&#xa;&#xa;GET - Listar&#xa;POST - Crear&#xa;PUT - Actualizar&#xa;DELETE - Eliminar" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2196F3;strokeColor=#1565C0;fontColor=#FFFFFF;fontSize=11;fontStyle=1;align=center" vertex="1" parent="1">
+          <mxGeometry x="550" y="1050" width="220" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="edge24" value="Proyectos" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=10" edge="1" parent="1" source="mainMenu" target="proyMenu">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <!-- SERVICIO: ESTIMACIONES -->
+        <mxCell id="estMenu" value="Estimaciones de Costo&#xa;&#xa;GET - Listar&#xa;POST - Crear&#xa;PUT/PATCH - Actualizar&#xa;DELETE - Eliminar" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2196F3;strokeColor=#1565C0;fontColor=#FFFFFF;fontSize=11;fontStyle=1;align=center" vertex="1" parent="1">
+          <mxGeometry x="850" y="1050" width="220" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="edge28" value="Estimaciones" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=10" edge="1" parent="1" source="mainMenu" target="estMenu">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <!-- SERVICIO: AVANCES -->
+        <mxCell id="avMenu" value="Avances de Obra&#xa;&#xa;GET - Listar&#xa;POST - Registrar&#xa;PUT/PATCH - Actualizar&#xa;DELETE - Eliminar" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2196F3;strokeColor=#1565C0;fontColor=#FFFFFF;fontSize=11;fontStyle=1;align=center" vertex="1" parent="1">
+          <mxGeometry x="1150" y="1050" width="220" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="edge34" value="Avances" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=10" edge="1" parent="1" source="mainMenu" target="avMenu">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <!-- SERVICIO: API EXTERNA -->
+        <mxCell id="httpFactory" value="API Externa&#xa;&#xa;GET /api/HttpFactory&#xa;Consumir JSONPlaceholder" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2196F3;strokeColor=#1565C0;fontColor=#FFFFFF;fontSize=11;fontStyle=1;align=center" vertex="1" parent="1">
+          <mxGeometry x="1750" y="1050" width="220" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="edge21" value="API Externa" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=10" edge="1" parent="1" source="mainMenu" target="httpFactory">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <!-- SERVICIO: ANÁLISIS -->
+        <mxCell id="getAnalisis" value="Análisis Financiero&#xa;&#xa;GET /api/Estimaciones/:id/analisis&#xa;&#xa;Calcular:&#xa;- Monto ejecutado&#xa;- % Avance físico&#xa;- Desviación presupuestal&#xa;- Proyección costo final&#xa;- Nivel de riesgo" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2196F3;strokeColor=#1565C0;fontColor=#FFFFFF;fontSize=10;fontStyle=1;align=left" vertex="1" parent="1">
+          <mxGeometry x="2050" y="1030" width="240" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="edge40" value="Análisis" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=10" edge="1" parent="1" source="mainMenu" target="getAnalisis">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        
+        <!-- VALIDACIONES COMUNES -->
+        <mxCell id="validation" value="Validaciones en TODOS los servicios:&#xa;&#xa;- JWT Token válido (401 si no)&#xa;- Ownership del recurso (403 si no es tuyo)&#xa;- Validación de DTOs (400 si inválido)&#xa;- Existencia del recurso (404 si no existe)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFF9C4;strokeColor=#F57F17;fontColor=#000000;fontSize=10;align=left;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="550" y="1250" width="420" height="120" as="geometry" />
+        </mxCell>
+        
+        <!-- BASE DE DATOS -->
+        <mxCell id="database" value="Base de Datos SQL Server&#xa;&#xa;Tablas:&#xa;- Users&#xa;- Proyectos (con UserId)&#xa;- EstimacionesCosto&#xa;- AvancesObra&#xa;&#xa;Relaciones:&#xa;User → Proyectos (1:N)&#xa;Proyecto → Estimaciones (1:N)&#xa;Estimación → Avances (1:N)" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#FF9800;strokeColor=#E65100;fontColor=#FFFFFF;fontSize=10;align=left" vertex="1" parent="1">
+          <mxGeometry x="1050" y="1250" width="240" height="200" as="geometry" />
+        </mxCell>
+        
+        <!-- RESPUESTAS -->
+        <mxCell id="responses" value="Respuestas HTTP&#xa;&#xa;200 OK - Operación exitosa&#xa;201 Created - Recurso creado&#xa;204 No Content - Eliminado&#xa;400 Bad Request - Validación fallida&#xa;401 Unauthorized - Sin token&#xa;403 Forbidden - No es tu recurso&#xa;404 Not Found - No existe&#xa;503 Service Unavailable - API externa falla" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#2E7D32;fontColor=#000000;fontSize=10;align=left;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="1350" y="1250" width="300" height="200" as="geometry" />
+        </mxCell>
+        
+        <!-- LEYENDA -->
+        <mxCell id="legend" value="LEYENDA DE COLORES" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#E0E0E0;strokeColor=#757575;fontColor=#000000;fontSize=12;fontStyle=1;align=center" vertex="1" parent="1">
+          <mxGeometry x="2400" y="40" width="200" height="40" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="legendAuth" value="Autenticación/Tokens" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#4CAF50;strokeColor=#2E7D32;fontColor=#FFFFFF;fontSize=10" vertex="1" parent="1">
+          <mxGeometry x="2400" y="100" width="200" height="30" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="legendError" value="Errores/Validaciones" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f44336;strokeColor=#c62828;fontColor=#FFFFFF;fontSize=10" vertex="1" parent="1">
+          <mxGeometry x="2400" y="140" width="200" height="30" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="legendProcess" value="Procesamiento/Lógica" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#2196F3;strokeColor=#1565C0;fontColor=#FFFFFF;fontSize=10" vertex="1" parent="1">
+          <mxGeometry x="2400" y="180" width="200" height="30" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="legendDB" value="Base de Datos" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=8;fillColor=#FF9800;strokeColor=#E65100;fontColor=#FFFFFF;fontSize=10" vertex="1" parent="1">
+          <mxGeometry x="2430" y="220" width="140" height="40" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="legendSuccess" value="Respuestas Exitosas" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#8BC34A;strokeColor=#558B2F;fontColor=#FFFFFF;fontSize=10" vertex="1" parent="1">
+          <mxGeometry x="2400" y="270" width="200" height="30" as="geometry" />
+        </mxCell>
+        
+        <mxCell id="legendDecision" value="Decisiones/Validaciones" style="rhombus;whiteSpace=wrap;html=1;fillColor=#9C27B0;strokeColor=#6A1B9A;fontColor=#FFFFFF;fontSize=10" vertex="1" parent="1">
+          <mxGeometry x="2430" y="310" width="140" height="80" as="geometry" />
+        </mxCell>
+        
+        <!-- NOTAS TÉCNICAS -->
+        <mxCell id="notes" value="NOTAS TÉCNICAS&#xa;&#xa;Autor: Miguel Diaz&#xa;Framework: ASP.NET Core 8.0&#xa;ORM: Entity Framework Core 8.0&#xa;Base de datos: SQL Server 2019+&#xa;Autenticación: JWT (válido 24h)&#xa;Validación: FluentValidation&#xa;Patrón: MVC + Repository + DTOs&#xa;API Externa: HttpClientFactory&#xa;Seguridad: BCrypt (factor 11)&#xa;CORS: Angular (localhost:4200)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#E3F2FD;strokeColor=#1565C0;fontColor=#000000;fontSize=9;align=left;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="2400" y="420" width="240" height="220" as="geometry" />
+        </mxCell>
+        
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

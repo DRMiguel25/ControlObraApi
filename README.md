@@ -14,6 +14,8 @@
 - [**🆕 Nuevas Características v2.0**](#-nuevas-características-v20)
 - [Características Principales](#-características-principales)
 - [Tecnologías Utilizadas](#-tecnologías-utilizadas)
+- [Arquitectura y Patrones de Diseño](#-arquitectura-y-patrones-de-diseño)
+- [**📊 Diagrama de Flujo General**](#-diagrama-de-flujo-general)
 - [Requisitos Previos](#-requisitos-previos)
 - [Instalación](#-instalación)
 - [Configuración](#-configuración)
@@ -154,7 +156,26 @@ Gestión eficiente de conexiones HTTP para el consumo de APIs externas, evitando
 
 ---
 
-## 📦 Requisitos Previos
+## � Diagrama de Flujo General
+
+El siguiente diagrama muestra el flujo completo del sistema ControlObraApi, desde la autenticación hasta la gestión de recursos:
+
+![Diagrama de Flujo General](Design/DIAGRAMA_FLUJO_GENERAL.drawio)
+
+**Componentes principales del diagrama:**
+
+1. **Autenticación**: Flujo de registro y login con validación JWT
+2. **Gestión de Proyectos**: CRUD completo con ownership validation
+3. **Estimaciones de Costo**: Presupuestos vinculados a proyectos
+4. **Avances de Obra**: Seguimiento del progreso físico y financiero
+5. **API Externa**: Consumo de servicios externos con HttpClientFactory
+6. **Análisis Financiero**: Cálculo automático de desviaciones presupuestales
+
+> **Nota**: El diagrama está disponible en formato DrawIO en la carpeta `Design/` para facilitar su edición y actualización.
+
+---
+
+## �📦 Requisitos Previos
 
 Antes de comenzar, asegúrate de tener instalado:
 
@@ -677,7 +698,7 @@ Usa las credenciales demo:
 
 ## 👥 Autor
 
-**Miguel Rodríguez**  
+**Miguel Diaz**  
 GitHub: [@DRMiguel25](https://github.com/DRMiguel25)
 
 ---
