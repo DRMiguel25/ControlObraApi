@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ControlObraApi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251123063728_AddNameAndEmailToUser")]
-    partial class AddNameAndEmailToUser
+    [Migration("20251124212031_InitialCreateWithOwnershipAndHttpFactory")]
+    partial class InitialCreateWithOwnershipAndHttpFactory
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -56,7 +56,7 @@ namespace ControlObraApi.Migrations
                         {
                             AvanceID = 1,
                             CostoID = 1,
-                            FechaRegistro = new DateTime(2025, 11, 13, 0, 37, 27, 715, DateTimeKind.Local).AddTicks(5176),
+                            FechaRegistro = new DateTime(2025, 1, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             MontoEjecutado = 75000.00m,
                             PorcentajeCompletado = 50.00m
                         },
@@ -64,9 +64,17 @@ namespace ControlObraApi.Migrations
                         {
                             AvanceID = 2,
                             CostoID = 2,
-                            FechaRegistro = new DateTime(2025, 11, 18, 0, 37, 27, 715, DateTimeKind.Local).AddTicks(5184),
+                            FechaRegistro = new DateTime(2025, 1, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             MontoEjecutado = 10000.00m,
-                            PorcentajeCompletado = 20.00m
+                            PorcentajeCompletado = 22.22m
+                        },
+                        new
+                        {
+                            AvanceID = 3,
+                            CostoID = 3,
+                            FechaRegistro = new DateTime(2025, 2, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            MontoEjecutado = 30000.00m,
+                            PorcentajeCompletado = 37.50m
                         });
                 });
 
@@ -106,13 +114,20 @@ namespace ControlObraApi.Migrations
                             CostoID = 1,
                             Concepto = "Cimentación y Estructura",
                             MontoEstimado = 150000.00m,
-                            ProyectoID = 2
+                            ProyectoID = 1
                         },
                         new
                         {
                             CostoID = 2,
                             Concepto = "Instalaciones Eléctricas",
                             MontoEstimado = 45000.00m,
+                            ProyectoID = 1
+                        },
+                        new
+                        {
+                            CostoID = 3,
+                            Concepto = "Acabados Interiores",
+                            MontoEstimado = 80000.00m,
                             ProyectoID = 2
                         });
                 });
@@ -136,17 +151,31 @@ namespace ControlObraApi.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("ProyectoID");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Proyectos");
 
                     b.HasData(
                         new
                         {
-                            ProyectoID = 2,
+                            ProyectoID = 1,
                             FechaInicio = new DateTime(2025, 1, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             NombreObra = "Torre Residencial Alpha",
-                            Ubicacion = "Zona Central"
+                            Ubicacion = "Zona Central",
+                            UserId = 1
+                        },
+                        new
+                        {
+                            ProyectoID = 2,
+                            FechaInicio = new DateTime(2025, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            NombreObra = "Edificio Comercial Beta",
+                            Ubicacion = "Zona Norte",
+                            UserId = 1
                         });
                 });
 
@@ -184,6 +213,17 @@ namespace ControlObraApi.Migrations
                         .IsUnique();
 
                     b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Email = "demo@test.com",
+                            Name = "Usuario Demo",
+                            PasswordHash = "$2a$11$vY8y8HZg5LqW3z9X2wK7P.7TqK9Z3yN4WqR8P.XmF5Kx9V7Qz8z9e",
+                            Role = "User",
+                            Username = "demo"
+                        });
                 });
 
             modelBuilder.Entity("ControlObraApi.Models.AvanceObra", b =>
@@ -206,6 +246,17 @@ namespace ControlObraApi.Migrations
                         .IsRequired();
 
                     b.Navigation("Proyecto");
+                });
+
+            modelBuilder.Entity("ControlObraApi.Models.Proyecto", b =>
+                {
+                    b.HasOne("ControlObraApi.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("ControlObraApi.Models.EstimacionCosto", b =>

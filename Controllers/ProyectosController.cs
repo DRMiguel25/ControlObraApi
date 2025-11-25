@@ -6,6 +6,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace ControlObraApi.Controllers
 {
@@ -21,6 +22,12 @@ namespace ControlObraApi.Controllers
             _context = context;
         }
 
+        // 🆕 Helper: Obtener ID del usuario autenticado desde JWT
+        private int GetCurrentUserId()
+        {
+            return int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
+        }
+
         // -----------------------------------------------------------------
         // GET: Obtener Proyecto por ID con sus Estimaciones
         // CORRECCIÓN CLAVE: Se especifica que el ID debe ser un entero
@@ -28,14 +35,16 @@ namespace ControlObraApi.Controllers
         [HttpGet("{id:int}")] 
         public async Task<IActionResult> GetProyecto(int id)
         {
+            var userId = GetCurrentUserId();
+            
             var proyecto = await _context.Proyectos
                 .Include(p => p.Estimaciones)
                     .ThenInclude(e => e.Avances)
-                .FirstOrDefaultAsync(p => p.ProyectoID == id);
+                .FirstOrDefaultAsync(p => p.ProyectoID == id && p.UserId == userId);  // 🆕 Filtro ownership
 
             if (proyecto == null)
             {
-                return NotFound($"Proyecto con ID {id} no encontrado.");
+                return NotFound($"Proyecto con ID {id} no encontrado o no tienes acceso.");
             }
 
             return Ok(proyecto);
@@ -47,7 +56,10 @@ namespace ControlObraApi.Controllers
         [HttpGet]
         public async Task<IActionResult> GetProyectos()
         {
+            var userId = GetCurrentUserId();
+            
             var proyectos = await _context.Proyectos
+                .Where(p => p.UserId == userId)  // 🆕 Filtro: solo proyectos del usuario
                 .Include(p => p.Estimaciones)
                 .ToListAsync();
             return Ok(proyectos);
@@ -57,8 +69,23 @@ namespace ControlObraApi.Controllers
         // POST: Crear Proyecto
         // -----------------------------------------------------------------
         [HttpPost]
-        public async Task<IActionResult> PostProyecto([FromBody] Proyecto proyecto)
+        public async Task<IActionResult> PostProyecto([FromBody] ProyectoCreateDTO dto)
         {
+            // Intentar parsear la fecha (acepta formatos locales como dd/MM/yyyy)
+            if (!DateTime.TryParse(dto.FechaInicio, out DateTime fechaInicioParsed))
+            {
+                return BadRequest($"Formato de fecha inválido: {dto.FechaInicio}. Use formato yyyy-MM-dd o dd/MM/yyyy.");
+            }
+
+            // 🆕 Asignar el proyecto al usuario autenticado
+            var proyecto = new Proyecto
+            {
+                NombreObra = dto.NombreObra,
+                Ubicacion = dto.Ubicacion,
+                FechaInicio = fechaInicioParsed,
+                UserId = GetCurrentUserId()
+            };
+            
             _context.Proyectos.Add(proyecto);
             await _context.SaveChangesAsync();
             
@@ -77,10 +104,18 @@ namespace ControlObraApi.Controllers
                 return BadRequest("El ID de la ruta no coincide con el ID del cuerpo.");
             }
 
+            var userId = GetCurrentUserId();
             var proyectoExistente = await _context.Proyectos.FindAsync(id);
+            
             if (proyectoExistente == null)
             {
                 return NotFound($"Proyecto con ID {id} no encontrado.");
+            }
+
+            // 🆕 Validar ownership
+            if (proyectoExistente.UserId != userId)
+            {
+                return Forbid();  // 403 Forbidden
             }
 
             proyectoExistente.NombreObra = proyecto.NombreObra;
@@ -106,10 +141,18 @@ namespace ControlObraApi.Controllers
         [HttpPatch("{id:int}")]
         public async Task<IActionResult> PatchProyecto(int id, [FromBody] ProyectoPatchDTO patchDto)
         {
+            var userId = GetCurrentUserId();
             var proyecto = await _context.Proyectos.FindAsync(id);
+            
             if (proyecto == null)
             {
                 return NotFound($"Proyecto con ID {id} no encontrado.");
+            }
+
+            // 🆕 Validar ownership
+            if (proyecto.UserId != userId)
+            {
+                return Forbid();  // 403 Forbidden
             }
 
             if (patchDto.NombreObra != null)
@@ -139,6 +182,8 @@ namespace ControlObraApi.Controllers
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteProyecto(int id)
         {
+            var userId = GetCurrentUserId();
+            
             var proyecto = await _context.Proyectos
                 .Include(p => p.Estimaciones)
                 .FirstOrDefaultAsync(p => p.ProyectoID == id);
@@ -146,6 +191,12 @@ namespace ControlObraApi.Controllers
             if (proyecto == null)
             {
                 return NotFound($"Proyecto con ID {id} no encontrado.");
+            }
+
+            // 🆕 Validar ownership
+            if (proyecto.UserId != userId)
+            {
+                return Forbid();  // 403 Forbidden
             }
 
             // Validar que no tenga estimaciones
@@ -172,6 +223,17 @@ namespace ControlObraApi.Controllers
         [HttpGet("Desviacion/{proyectoId:int}")]
         public async Task<IActionResult> GetDesviacionFinanciera(int proyectoId)
         {
+            var userId = GetCurrentUserId();
+            
+            // 🆕 Validar que el proyecto pertenezca al usuario
+            var proyectoExists = await _context.Proyectos
+                .AnyAsync(p => p.ProyectoID == proyectoId && p.UserId == userId);
+            
+            if (!proyectoExists)
+            {
+                return NotFound("Proyecto no encontrado o no tienes acceso.");
+            }
+            
             var estimacionesConAvances = await _context.EstimacionesCosto
                 .Include(e => e.Avances)
                 .Where(e => e.ProyectoID == proyectoId)

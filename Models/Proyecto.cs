@@ -12,6 +12,13 @@ namespace ControlObraApi.Models
         public required string Ubicacion { get; set; }
         public DateTime FechaInicio { get; set; } = DateTime.Now;
 
+        // 🆕 OWNERSHIP: Relación con Usuario Propietario
+        public int UserId { get; set; }
+        
+        [ForeignKey("UserId")]
+        [Newtonsoft.Json.JsonIgnore]
+        public User? User { get; set; }
+
         // Relación: Un Proyecto puede tener muchas Estimaciones
         public ICollection<EstimacionCosto> Estimaciones { get; set; } = new List<EstimacionCosto>();
     }

@@ -8,11 +8,28 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ControlObraApi.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialSetupWithData : Migration
+    public partial class InitialCreateWithOwnershipAndHttpFactory : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "Users",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Username = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Role = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Users", x => x.Id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "Proyectos",
                 columns: table => new
@@ -21,11 +38,18 @@ namespace ControlObraApi.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     NombreObra = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Ubicacion = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    FechaInicio = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    FechaInicio = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Proyectos", x => x.ProyectoID);
+                    table.ForeignKey(
+                        name: "FK_Proyectos_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -73,17 +97,27 @@ namespace ControlObraApi.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "Users",
+                columns: new[] { "Id", "Email", "Name", "PasswordHash", "Role", "Username" },
+                values: new object[] { 1, "demo@test.com", "Usuario Demo", "$2a$11$vY8y8HZg5LqW3z9X2wK7P.7TqK9Z3yN4WqR8P.XmF5Kx9V7Qz8z9e", "User", "demo" });
+
+            migrationBuilder.InsertData(
                 table: "Proyectos",
-                columns: new[] { "ProyectoID", "FechaInicio", "NombreObra", "Ubicacion" },
-                values: new object[] { 2, new DateTime(2025, 1, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), "Torre Residencial Alpha", "Zona Central" });
+                columns: new[] { "ProyectoID", "FechaInicio", "NombreObra", "Ubicacion", "UserId" },
+                values: new object[,]
+                {
+                    { 1, new DateTime(2025, 1, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), "Torre Residencial Alpha", "Zona Central", 1 },
+                    { 2, new DateTime(2025, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Edificio Comercial Beta", "Zona Norte", 1 }
+                });
 
             migrationBuilder.InsertData(
                 table: "EstimacionesCosto",
                 columns: new[] { "CostoID", "Concepto", "MontoEstimado", "ProyectoID" },
                 values: new object[,]
                 {
-                    { 1, "Cimentación y Estructura", 150000.00m, 2 },
-                    { 2, "Instalaciones Eléctricas", 45000.00m, 2 }
+                    { 1, "Cimentación y Estructura", 150000.00m, 1 },
+                    { 2, "Instalaciones Eléctricas", 45000.00m, 1 },
+                    { 3, "Acabados Interiores", 80000.00m, 2 }
                 });
 
             migrationBuilder.InsertData(
@@ -91,8 +125,9 @@ namespace ControlObraApi.Migrations
                 columns: new[] { "AvanceID", "CostoID", "FechaRegistro", "MontoEjecutado", "PorcentajeCompletado" },
                 values: new object[,]
                 {
-                    { 1, 1, new DateTime(2025, 11, 11, 13, 10, 18, 649, DateTimeKind.Local).AddTicks(9882), 75000.00m, 50.00m },
-                    { 2, 2, new DateTime(2025, 11, 16, 13, 10, 18, 649, DateTimeKind.Local).AddTicks(9892), 10000.00m, 20.00m }
+                    { 1, 1, new DateTime(2025, 1, 20, 0, 0, 0, 0, DateTimeKind.Unspecified), 75000.00m, 50.00m },
+                    { 2, 2, new DateTime(2025, 1, 25, 0, 0, 0, 0, DateTimeKind.Unspecified), 10000.00m, 22.22m },
+                    { 3, 3, new DateTime(2025, 2, 5, 0, 0, 0, 0, DateTimeKind.Unspecified), 30000.00m, 37.50m }
                 });
 
             migrationBuilder.CreateIndex(
@@ -104,6 +139,17 @@ namespace ControlObraApi.Migrations
                 name: "IX_EstimacionesCosto_ProyectoID",
                 table: "EstimacionesCosto",
                 column: "ProyectoID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Proyectos_UserId",
+                table: "Proyectos",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Users_Email",
+                table: "Users",
+                column: "Email",
+                unique: true);
         }
 
         /// <inheritdoc />
@@ -117,6 +163,9 @@ namespace ControlObraApi.Migrations
 
             migrationBuilder.DropTable(
                 name: "Proyectos");
+
+            migrationBuilder.DropTable(
+                name: "Users");
         }
     }
 }

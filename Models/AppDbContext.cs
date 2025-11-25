@@ -17,6 +17,13 @@ namespace ControlObraApi.Models
         {
             base.OnModelCreating(modelBuilder);
 
+            // 🆕 Relación User -> Proyecto (1:N) - OWNERSHIP
+            modelBuilder.Entity<Proyecto>()
+                .HasOne(p => p.User)
+                .WithMany()
+                .HasForeignKey(p => p.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
             // Configurar relaciones... (Resto de tu código)
 
             // Configurar explícitamente la relación AvanceObra -> EstimacionCosto
@@ -35,24 +42,55 @@ namespace ControlObraApi.Models
 
 
             // ******************************************************
-            // *** CONFIGURACIÓN CLAVE: SEED DATA (Datos Iniciales) ***
+            // *** SEED DATA - Usuario Demo y Proyectos de Prueba ***
             // ******************************************************
 
-            // 1. Insertar Proyecto (ID 2)
+            // 1. Usuario Demo (para facilitar pruebas del profesor)
+            modelBuilder.Entity<User>().HasData(
+                new User
+                {
+                    Id = 1,
+                    Name = "Usuario Demo",
+                    Email = "demo@test.com",
+                    Username = "demo",
+                    // Hash BCrypt de "Pass123!"
+                    PasswordHash = "$2a$11$vY8y8HZg5LqW3z9X2wK7P.7TqK9Z3yN4WqR8P.XmF5Kx9V7Qz8z9e",
+                    Role = "User"
+                }
+            );
+
+            // 2. Proyectos de Demo (pertenecen al usuario demo ID=1)
             modelBuilder.Entity<Proyecto>().HasData(
-                new Proyecto { ProyectoID = 2, NombreObra = "Torre Residencial Alpha", Ubicacion = "Zona Central", FechaInicio = new DateTime(2025, 1, 15) }
+                new Proyecto
+                {
+                    ProyectoID = 1,
+                    NombreObra = "Torre Residencial Alpha",
+                    Ubicacion = "Zona Central",
+                    FechaInicio = new DateTime(2025, 1, 15),
+                    UserId = 1  // Pertenece al usuario demo
+                },
+                new Proyecto
+                {
+                    ProyectoID = 2,
+                    NombreObra = "Edificio Comercial Beta",
+                    Ubicacion = "Zona Norte",
+                    FechaInicio = new DateTime(2025, 2, 1),
+                    UserId = 1  // Pertenece al usuario demo
+                }
             );
 
-            // 2. Insertar Estimaciones (ID 1 y 2)
+            // 3. Estimaciones de Costo
             modelBuilder.Entity<EstimacionCosto>().HasData(
-                new EstimacionCosto { CostoID = 1, Concepto = "Cimentación y Estructura", MontoEstimado = 150000.00m, ProyectoID = 2 },
-                new EstimacionCosto { CostoID = 2, Concepto = "Instalaciones Eléctricas", MontoEstimado = 45000.00m, ProyectoID = 2 }
+                new EstimacionCosto { CostoID = 1, Concepto = "Cimentación y Estructura", MontoEstimado = 150000.00m, ProyectoID = 1 },
+                new EstimacionCosto { CostoID = 2, Concepto = "Instalaciones Eléctricas", MontoEstimado = 45000.00m, ProyectoID = 1 },
+                new EstimacionCosto { CostoID = 3, Concepto = "Acabados Interiores", MontoEstimado = 80000.00m, ProyectoID = 2 }
             );
 
-            // 3. Insertar Avances (ID 1 y 2)
+            // 4. Avances de Obra
             modelBuilder.Entity<AvanceObra>().HasData(
-                new AvanceObra { AvanceID = 1, MontoEjecutado = 75000.00m, PorcentajeCompletado = 50.00m, CostoID = 1, FechaRegistro = DateTime.Now.AddDays(-10) },
-                new AvanceObra { AvanceID = 2, MontoEjecutado = 10000.00m, PorcentajeCompletado = 20.00m, CostoID = 2, FechaRegistro = DateTime.Now.AddDays(-5) }
+                new AvanceObra { AvanceID = 1, MontoEjecutado = 75000.00m, PorcentajeCompletado = 50.00m, CostoID = 1, FechaRegistro = new DateTime(2025, 1, 20) },
+                new AvanceObra { AvanceID = 2, MontoEjecutado = 10000.00m, PorcentajeCompletado = 22.22m, CostoID = 2, FechaRegistro = new DateTime(2025, 1, 25) },
+                new AvanceObra { AvanceID = 3, MontoEjecutado = 30000.00m, PorcentajeCompletado = 37.50m, CostoID = 3, FechaRegistro = new DateTime(2025, 2, 5) }
             );
         }
     }

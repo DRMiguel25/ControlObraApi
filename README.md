@@ -1,6 +1,6 @@
-# 🏗️ ControlObraApi
+# 🏗️ ControlObraApi v2.0
 
-> Sistema integral de gestión y control de proyectos de construcción - API RESTful
+> Sistema integral de gestión y control de proyectos de construcción con sistema multi-usuario - API RESTful
 
 [![.NET](https://img.shields.io/badge/.NET-8.0-512BD4?logo=dotnet)](https://dotnet.microsoft.com/)
 [![SQL Server](https://img.shields.io/badge/SQL_Server-CC2927?logo=microsoft-sql-server&logoColor=white)](https://www.microsoft.com/sql-server)
@@ -11,17 +11,16 @@
 ## 📋 Tabla de Contenidos
 
 - [Descripción](#-descripción)
+- [**🆕 Nuevas Características v2.0**](#-nuevas-características-v20)
 - [Características Principales](#-características-principales)
 - [Tecnologías Utilizadas](#-tecnologías-utilizadas)
-- [Diagrama de Flujo](#-diagrama-de-flujo-del-sistema)
 - [Requisitos Previos](#-requisitos-previos)
 - [Instalación](#-instalación)
 - [Configuración](#-configuración)
 - [Ejecución](#-ejecución)
+- [**🔑 Credenciales de Prueba**](#-credenciales-de-prueba)
 - [Documentación de Endpoints](#-documentación-de-endpoints)
 - [Ejemplos de Uso en Postman](#-ejemplos-de-uso-en-postman)
-- [Estructura del Proyecto](#-estructura-del-proyecto)
-- [Modelos de Datos](#-modelos-de-datos)
 
 ---
 
@@ -32,10 +31,38 @@
 ### Problema que Soluciona
 
 - ✅ **Centralización de datos**: Unifica información de proyectos, presupuestos y avances
+- ✅ **Seguridad multi-usuario**: Cada usuario gestiona sus propios proyectos de forma aislada
 - ✅ **Visibilidad financiera**: Análisis automático de desviaciones presupuestales
 - ✅ **Control de avances**: Seguimiento detallado del progreso físico y financiero
-- ✅ **Seguridad**: Autenticación JWT para protección de datos sensibles
+- ✅ **Consumo de APIs externas**: Integración con servicios externos
+- ✅ **Autenticación JWT**: Protección de datos sensibles
 - ✅ **Validación de datos**: Integridad garantizada mediante FluentValidation
+
+---
+
+## 🆕 Nuevas Características v2.0
+
+### 🔐 Sistema Multi-Usuario con Ownership
+
+- **Aislamiento de datos**: Cada usuario solo puede ver y gestionar **sus propios** proyectos
+- **Control de acceso**: Validaciones automáticas en todos los endpoints (403 Forbidden)
+- **Claims JWT extendidos**: Tokens incluyen `UserId` para filtrado
+- **Seguridad robusta**: Protección contra acceso no autorizado a recursos ajenos
+
+### 🌐 Consumo de API Externa
+
+- **Nuevo Endpoint**: `GET /api/HttpFactory` - Consume JSONPlaceholder API
+- **Patrón HttpClientFactory**: Gestión óptima de conexiones HTTP
+- **Prevención de agotamiento de sockets**: Best practices de .NET
+- **Manejo robusto de errores**: Códigos HTTP apropiados y logging
+
+### 👤 Usuario Demo Pre-Configurado
+
+Para facilitar las pruebas del profesor, el sistema incluye:
+- **Email**: `demo@test.com`
+- **Password**: `Pass123!`
+- **Proyectos pre-cargados**: 2 proyectos de ejemplo
+- **Estimaciones y avances**: Datos de prueba completos
 
 ---
 
@@ -45,26 +72,40 @@
    - Registro de usuarios con encriptación BCrypt
    - Login con generación de tokens JWT
    - Tokens válidos por 24 horas
+   - **🆕 Claims con UserId para ownership**
 
-2. **📊 Gestión de Proyectos**
+2. **👥 Sistema Multi-Usuario**
+   - **🆕 Cada usuario solo ve sus propios proyectos**
+   - **🆕 Validación automática de ownership en operaciones CRUD**
+   - **🆕 Protección 403 Forbidden en accesos no autorizados**
+
+3. **📊 Gestión de Proyectos**
    - CRUD completo de proyectos de construcción
    - Registro de información clave (nombre, ubicación, fecha)
    - Consulta con estimaciones y avances asociados
+   - **🆕 Asignación automática de userId**
 
-3. **💰 Administración de Presupuestos**
+4. **💰 Administración de Presupuestos**
    - Creación de estimaciones de costos por concepto
    - Actualización parcial (PATCH) o completa (PUT)
    - Validación automática de montos y conceptos
+   - **🆕 Validación de ownership del proyecto padre**
 
-4. **📈 Seguimiento de Avances**
+5. **📈 Seguimiento de Avances**
    - Registro de avances físicos (% completado)
    - Registro de montos ejecutados
    - Consulta de avances por estimación
+   - **🆕 Validación de ownership indirecto vía estimación**
 
-5. **🎯 Análisis de Desviación Financiera (Endpoint Diferenciador)**
+6. **🎯 Análisis de Desviación Financiera**
    - Cálculo automático de desviaciones presupuestales
    - Proyección de costo final basado en avance físico
    - Clasificación de riesgo: BAJO, MEDIO, ALTO
+
+7. **🌐 Integración con APIs Externas**
+   - **🆕 Endpoint HttpFactory para consumir JSONPlaceholder**
+   - **🆕 Patrón HttpClientFactory**
+   - **🆕 Logging y manejo de errores**
 
 ---
 
@@ -76,67 +117,40 @@
 | Entity Framework Core | 8.0 | ORM para base de datos |
 | SQL Server | 2019+ | Base de datos relacional |
 | JWT | - | Autenticación y autorización |
-| BCrypt.Net | - | Encriptación de contraseñas |
-| FluentValidation | - | Validación de modelos |
+| BCrypt.Net | 4.0.3 | Encriptación de contraseñas |
+| FluentValidation | 11.3.1 | Validación de modelos |
+| **🆕 HttpClientFactory** | - | **Consumo optimizado de APIs externas** |
 | Swagger/OpenAPI | - | Documentación interactiva |
 
 ---
 
-## 📊 Diagrama de Flujo del Sistema
+## 🏛️ Arquitectura y Patrones de Diseño
 
-```mermaid
-flowchart TD
-    Start([INICIO]) --> Auth[Autenticación de Usuario<br/>POST /api/Auth/login]
-    
-    Auth --> Decision{¿Credenciales<br/>Válidas?}
-    
-    Decision -->|NO| Error1[Error: Usuario no encontrado<br/>o contraseña incorrecta]
-    Error1 --> End1([FIN])
-    
-    Decision -->|SÍ| Token[Generar Token JWT<br/>Válido por 24 horas]
-    
-    Token --> Dashboard[Dashboard Principal<br/>Servicios Disponibles]
-    
-    Dashboard --> Proyectos[Gestión de Proyectos<br/>CRUD Completo]
-    Dashboard --> Estimaciones[Estimaciones de Costo<br/>Presupuesto por Concepto]
-    Dashboard --> Avances[Registro de Avances<br/>Montos y Porcentajes]
-    Dashboard --> Analisis[Análisis Financiero<br/>Desviación Presupuestal]
-    
-    Proyectos --> DB[(Base de Datos<br/>SQL Server)]
-    Estimaciones --> DB
-    Avances --> DB
-    Analisis --> DB
-    
-    DB --> Validacion{¿Datos<br/>Válidos?}
-    
-    Validacion -->|NO| ErrorValidacion[Error de Validación<br/>400 Bad Request]
-    ErrorValidacion --> End2([FIN])
-    
-    Validacion -->|SÍ| Proceso[Procesamiento<br/>Exitoso]
-    
-    Proceso --> Response[Respuesta JSON<br/>200 OK / 201 Created]
-    
-    Response --> End3([FIN])
-    
-    style Start fill:#4CAF50,stroke:#2E7D32,stroke-width:3px,color:#fff
-    style Auth fill:#2196F3,stroke:#1565C0,stroke-width:2px,color:#fff
-    style Token fill:#2196F3,stroke:#1565C0,stroke-width:2px,color:#fff
-    style Dashboard fill:#2196F3,stroke:#1565C0,stroke-width:2px,color:#fff
-    style Proyectos fill:#2196F3,stroke:#1565C0,stroke-width:2px,color:#fff
-    style Estimaciones fill:#2196F3,stroke:#1565C0,stroke-width:2px,color:#fff
-    style Avances fill:#2196F3,stroke:#1565C0,stroke-width:2px,color:#fff
-    style Analisis fill:#FF9800,stroke:#E65100,stroke-width:2px,color:#fff
-    style DB fill:#9C27B0,stroke:#6A1B9A,stroke-width:2px,color:#fff
-    style Decision fill:#FF9800,stroke:#E65100,stroke-width:2px,color:#fff
-    style Validacion fill:#FF9800,stroke:#E65100,stroke-width:2px,color:#fff
-    style Error1 fill:#F44336,stroke:#C62828,stroke-width:2px,color:#fff
-    style ErrorValidacion fill:#F44336,stroke:#C62828,stroke-width:2px,color:#fff
-    style Proceso fill:#4CAF50,stroke:#2E7D32,stroke-width:2px,color:#fff
-    style Response fill:#4CAF50,stroke:#2E7D32,stroke-width:2px,color:#fff
-    style End1 fill:#757575,stroke:#424242,stroke-width:2px,color:#fff
-    style End2 fill:#757575,stroke:#424242,stroke-width:2px,color:#fff
-    style End3 fill:#757575,stroke:#424242,stroke-width:2px,color:#fff
-```
+Este proyecto ha sido construido siguiendo las mejores prácticas de ingeniería de software para garantizar mantenibilidad, escalabilidad y seguridad:
+
+### 1. **Patrón MVC (Model-View-Controller)**
+Separación clara de responsabilidades:
+- **Modelos**: Entidades de dominio (`Proyecto`, `User`, etc.)
+- **Controladores**: Lógica de negocio y orquestación de peticiones HTTP
+- **Vistas**: (Frontend Angular desacoplado)
+
+### 2. **Inyección de Dependencias (DI)**
+Uso extensivo del contenedor de DI de .NET Core para desacoplar componentes:
+- `AppDbContext` inyectado en controladores
+- `IHttpClientFactory` para clientes HTTP
+- `IValidator<T>` para validaciones fluidas
+
+### 3. **Data Transfer Objects (DTOs)**
+Implementación de DTOs (`ProyectoCreateDTO`, `RegisterDto`) para:
+- Ocultar la estructura interna de la base de datos
+- Prevenir ataques de *Over-posting*
+- Desacoplar la capa de presentación de la capa de datos
+
+### 4. **Repository Pattern (vía EF Core)**
+Uso de Entity Framework Core como abstracción de la capa de datos, permitiendo consultas LINQ tipadas y protección contra SQL Injection.
+
+### 5. **HttpClientFactory Pattern**
+Gestión eficiente de conexiones HTTP para el consumo de APIs externas, evitando el agotamiento de sockets y permitiendo políticas de reintento (resiliencia).
 
 ---
 
@@ -145,7 +159,7 @@ flowchart TD
 Antes de comenzar, asegúrate de tener instalado:
 
 - [.NET SDK 8.0+](https://dotnet.microsoft.com/download)
-- [SQL Server 2019+](https://www.microsoft.com/sql-server) o SQL Server Express
+- [SQL Server 2019+](https://www.microsoft.com/sql-server) o Docker con SQL Server
 - [Postman](https://www.postman.com/downloads/) (para pruebas de API)
 - [Visual Studio 2022](https://visualstudio.microsoft.com/) o [VS Code](https://code.visualstudio.com/) (opcional)
 
@@ -156,7 +170,7 @@ Antes de comenzar, asegúrate de tener instalado:
 ### 1️⃣ Clonar el Repositorio
 
 ```bash
-git clone https://github.com/tu-usuario/ControlObraApi.git
+git clone https://github.com/DRMiguel25/ControlObraApi.git
 cd ControlObraApi/ControlObraApi
 ```
 
@@ -166,18 +180,12 @@ cd ControlObraApi/ControlObraApi
 dotnet restore
 ```
 
-### 3️⃣ Verificar las Dependencias
+### 3️⃣ Iniciar SQL Server (si usas Docker)
 
-El proyecto incluye automáticamente las siguientes dependencias:
-
-```xml
-<PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.x" />
-<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.x" />
-<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.x" />
-<PackageReference Include="BCrypt.Net-Next" Version="4.0.x" />
-<PackageReference Include="FluentValidation.AspNetCore" Version="11.3.x" />
-<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.x" />
-<PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.x" />
+```bash
+docker run -e "ACCEPT_EULA=Y" -e "MSSQL_SA_PASSWORD=Admin12345" \
+   -p 1433:1433 --name sqlserver \
+   -d mcr.microsoft.com/mssql/server:2022-latest
 ```
 
 ---
@@ -186,21 +194,23 @@ El proyecto incluye automáticamente las siguientes dependencias:
 
 ### 1️⃣ Configurar SQL Server
 
-Edita el archivo `appsettings.json` con tus credenciales de SQL Server:
+El archivo `appsettings.json` ya está configurado:
 
 ```json
 {
   "ConnectionStrings": {
-    "ConexionSQL": "Server=localhost,1433;Database=ControlObraDB;User Id=sa;Password=TU_PASSWORD;TrustServerCertificate=True"
+    "ConexionSQL": "Server=localhost,1433;Database=ControlObraDB;User Id=sa;Password=Admin12345;TrustServerCertificate=True"
   },
   "AppSettings": {
     "Token": "my super secret key for jwt token generation that is long enough"
   },
-  "AllowedHosts": "*"
+  "ExternalApis": {
+    "Base_url": "https://jsonplaceholder.typicode.com"
+  }
 }
 ```
 
-> ⚠️ **Importante**: Reemplaza `TU_PASSWORD` con tu contraseña de SQL Server.
+> ⚠️ **Importante**: Ajusta las credenciales si tu SQL Server usa otras.
 
 ### 2️⃣ Crear la Base de Datos
 
@@ -208,38 +218,54 @@ Edita el archivo `appsettings.json` con tus credenciales de SQL Server:
 dotnet ef database update
 ```
 
-Este comando ejecutará las migraciones y creará:
+Este comando creará:
 - Base de datos `ControlObraDB`
 - Tablas: `Users`, `Proyectos`, `EstimacionesCosto`, `AvancesObra`
-
-### 3️⃣ Verificar la Conexión
-
-Si tienes problemas de conexión, verifica:
-- SQL Server está corriendo
-- El puerto 1433 está abierto
-- Las credenciales son correctas
-- La autenticación SQL Server está habilitada
+- **🆕 Usuario demo con 2 proyectos de ejemplo**
 
 ---
 
 ## ▶️ Ejecución
-
-### Opción 1: Usando Visual Studio
-
-1. Abre `ControlObraApi.sln`
-2. Presiona `F5` o `Ctrl + F5`
-3. La API se ejecutará en `https://localhost:7xxx` y `http://localhost:5xxx`
-
-### Opción 2: Usando .NET CLI
 
 ```bash
 dotnet run
 ```
 
 La API estará disponible en:
-- **HTTPS**: `https://localhost:7135`
-- **HTTP**: `http://localhost:5135`
-- **Swagger**: `https://localhost:7135/swagger`
+- **HTTP**: `http://localhost:5000`
+- **HTTPS**: `https://localhost:7000`
+- **Swagger**: `http://localhost:5000/swagger`
+
+---
+
+## 🔑 Credenciales de Prueba
+
+### Usuario Demo (Pre-configurado)
+
+Para facilitar las pruebas, existe un usuario demo con datos de ejemplo:
+
+```
+📧 Email: demo@test.com
+🔑 Password: Pass123!
+```
+
+**Este usuario tiene:**
+- ✅ 2 proyectos pre-cargados:
+  - Torre Residencial Alpha (Zona Central)
+  - Edificio Comercial Beta (Zona Norte)
+- ✅ 3 estimaciones de costo
+- ✅ 3 avances de obra registrados
+
+**Uso en Postman:**
+
+```json
+POST http://localhost:5000/api/Auth/login
+
+{
+  "email": "demo@test.com",
+  "password": "Pass123!"
+}
+```
 
 ---
 
@@ -253,19 +279,19 @@ La API estará disponible en:
 > ```http
 > Authorization: Bearer {tu_token_jwt}
 > ```
+
+> [!WARNING]
+> **🆕 SISTEMA MULTI-USUARIO**
 > 
-> **Pasos para autenticarte:**
-> 1. Registra un usuario con `POST /api/Auth/register` O inicia sesión con `POST /api/Auth/login`
-> 2. Copia el token de la respuesta
-> 3. Incluye el token en el header `Authorization: Bearer {token}` en todas las peticiones a endpoints protegidos
-> 4. El token es válido por 24 horas
+> Cada usuario solo puede ver y gestionar **sus propios recursos**:
+> - `GET /api/Proyectos` → Solo tus proyectos
+> - `GET /api/Proyectos/1` → 404 si no es tuyo
+> - `POST /api/Estimaciones` → Solo en tus proyectos
+> - `DELETE /api/Proyectos/5` → 403 si no es tuyo
 
 ---
 
 ### 🔐 **Autenticación**
-
-> [!NOTE]
-> Los endpoints de autenticación son **públicos** y no requieren token.
 
 #### `POST /api/Auth/register` - Registrar Usuario
 
@@ -280,12 +306,12 @@ Crea un nuevo usuario en el sistema.
 }
 ```
 
-**Response (201 Created):**
+**Response (200 OK):**
 ```json
 {
   "token": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9...",
   "user": {
-    "userId": 1,
+    "id": 2,
     "name": "Miguel Rodríguez",
     "email": "miguel@constructora.com",
     "username": "miguel",
@@ -303,8 +329,8 @@ Autentica un usuario y genera un token JWT.
 **Request Body:**
 ```json
 {
-  "email": "miguel@constructora.com",
-  "password": "MiPassword123!"
+  "email": "demo@test.com",
+  "password": "Pass123!"
 }
 ```
 
@@ -317,172 +343,124 @@ Autentica un usuario y genera un token JWT.
 
 ---
 
+### 🌐 **API Externa** 🆕
+
+#### `GET /api/HttpFactory` - Consumir JSONPlaceholder
+
+Obtiene usuarios desde la API pública JSONPlaceholder (demuestra consumo de APIs externas).
+
+**Headers:**
+```
+Authorization: Bearer {tu_token}
+```
+
+**Response (200 OK):**
+```json
+{
+  "source": "JSONPlaceholder API",
+  "endpoint": "/users",
+  "count": 10,
+  "data": [
+    {
+      "id": 1,
+      "name": "Leanne Graham",
+      "username": "Bret",
+      "email": "Sincere@april.biz",
+      "phone": "1-770-736-8031 x56442",
+      "website": "hildegard.org"
+    }
+  ]
+}
+```
+
+**Características:**
+- ✅ Usa patrón HttpClientFactory
+- ✅ Manejo robusto de errores (503 si falla)
+- ✅ Logging de peticiones
+- ✅ Timeout configurado (30s)
+
+---
+
 ### 🏗️ **Proyectos**
 
-> [!WARNING]
-> **Todos los endpoints de Proyectos requieren autenticación JWT.**
-> 
-> Incluye el header: `Authorization: Bearer {tu_token}`
+#### `GET /api/Proyectos` - Listar Proyectos **del Usuario Autenticado** 🆕
 
-#### `GET /api/Proyectos` - Listar Todos los Proyectos
-
-Obtiene todos los proyectos con sus estimaciones.
+**🔐 Requiere:** JWT Token
 
 **Response (200 OK):**
 ```json
 [
   {
     "proyectoID": 1,
-    "nombreObra": "Torre Residencial Bosques",
-    "ubicacion": "Av. Insurgentes 1234, CDMX",
+    "nombreObra": "Torre Residencial Alpha",
+    "ubicacion": "Zona Central",
     "fechaInicio": "2025-01-15T00:00:00",
+    "userId": 1,
     "estimaciones": [...]
   }
 ]
 ```
 
+> **🆕 Cambio**: Solo retorna proyectos donde `userId` coincida con el usuario autenticado.
+
 ---
 
 #### `GET /api/Proyectos/{id}` - Obtener Proyecto por ID
 
-Obtiene un proyecto específico con todas sus estimaciones y avances.
+**🔐 Requiere:** JWT Token  
+**🆕 Validación:** Solo si el proyecto pertenece al usuario
 
-**Response (200 OK):**
-```json
-{
-  "proyectoID": 1,
-  "nombreObra": "Torre Residencial Bosques",
-  "ubicacion": "Av. Insurgentes 1234, CDMX",
-  "fechaInicio": "2025-01-15T00:00:00",
-  "estimaciones": [
-    {
-      "costoID": 1,
-      "concepto": "Excavación y Cimentación",
-      "montoEstimado": 450000.00,
-      "avances": [...]
-    }
-  ]
-}
-```
+**Response (200 OK):** Proyecto completo  
+**Response (404 Not Found):** Si no es tuyo o no existe
 
 ---
 
 #### `POST /api/Proyectos` - Crear Proyecto
 
-Crea un nuevo proyecto de construcción.
+**🔐 Requiere:** JWT Token
 
 **Request Body:**
 ```json
 {
   "nombreObra": "Centro Comercial Norte",
-  "ubicacion": "Boulevard Norte 5678, Monterrey",
-  "fechaInicio": "2025-02-01T00:00:00"
+  "ubicacion": "Boulevard Norte 5678",
+  "fechaInicio": "2025-02-01"
 }
 ```
 
 **Response (201 Created):**
 ```json
 {
-  "proyectoID": 2,
+  "proyectoID": 3,
   "nombreObra": "Centro Comercial Norte",
-  "ubicacion": "Boulevard Norte 5678, Monterrey",
+  "ubicacion": "Boulevard Norte 5678",
   "fechaInicio": "2025-02-01T00:00:00",
+  "userId": 2,  // 🆕 Asignado automáticamente
   "estimaciones": []
 }
 ```
 
----
-
-#### `PUT /api/Proyectos/{id}` - Actualizar Proyecto Completo
-
-Actualiza todos los campos de un proyecto.
-
-**Request Body:**
-```json
-{
-  "proyectoID": 1,
-  "nombreObra": "Torre Residencial Bosques (Actualizado)",
-  "ubicacion": "Av. Insurgentes 1234, CDMX",
-  "fechaInicio": "2025-01-20T00:00:00"
-}
-```
-
-**Response (204 No Content)**
-
----
-
-#### `PATCH /api/Proyectos/{id}` - Actualizar Proyecto Parcial
-
-Actualiza solo los campos especificados.
-
-**Request Body:**
-```json
-{
-  "nombreObra": "Torre Residencial Bosques"
-}
-```
-
-**Response (200 OK):**
-```json
-{
-  "proyectoID": 1,
-  "nombreObra": "Torre Residencial Bosques",
-  "ubicacion": "Av. Insurgentes 1234, CDMX",
-  "fechaInicio": "2025-01-15T00:00:00"
-}
-```
+> **🆕 Cambio**: El campo `userId` se asigna automáticamente del token JWT.
 
 ---
 
 #### `DELETE /api/Proyectos/{id}` - Eliminar Proyecto
 
-Elimina un proyecto (solo si no tiene estimaciones).
+**🔐 Requiere:** JWT Token  
+**🆕 Validación:** Solo puedes eliminar tus propios proyectos
 
-**Response (204 No Content)**
-
-**Response Error (400 Bad Request):**
-```json
-{
-  "error": "No se puede eliminar el proyecto",
-  "razon": "El proyecto tiene estimaciones de costo asociadas. Elimínelas primero.",
-  "estimacionesCount": 3
-}
-```
-
----
-
-#### `GET /api/Proyectos/Desviacion/{id}` - 🎯 Análisis de Desviación (Endpoint Diferenciador)
-
-Calcula la desviación financiera de un proyecto.
-
-**Response (200 OK):**
-```json
-{
-  "riesgoDesviacion": "ALTO",
-  "desviacionPorcentaje": 12.50,
-  "costoEstimado": 2000000.00,
-  "costoProyectadoFinal": 2250000.00,
-  "mensaje": "El proyecto tiene un avance físico promedio del 45.00%."
-}
-```
-
-**Clasificación de Riesgo:**
-- **BAJO**: Desviación ≤ 0% (dentro o por debajo del presupuesto)
-- **MEDIO**: Desviación entre 0% y 5%
-- **ALTO**: Desviación > 5%
+**Response (204 No Content):** Eliminado exitosamente  
+**Response (403 Forbidden):** Si intentas eliminar un proyecto que no es tuyo  
+**Response (404 Not Found):** Si no existe
 
 ---
 
 ### 💰 **Estimaciones de Costo**
 
-> [!WARNING]
-> **Todos los endpoints de Estimaciones requieren autenticación JWT.**
-> 
-> Incluye el header: `Authorization: Bearer {tu_token}`
-
 #### `POST /api/Estimaciones` - Crear Estimación
 
-Crea una nueva estimación de costo para un proyecto.
+**🔐 Requiere:** JWT Token  
+**🆕 Validación:** Solo puedes crear estimaciones en **tus proyectos**
 
 **Request Body:**
 ```json
@@ -493,99 +471,17 @@ Crea una nueva estimación de costo para un proyecto.
 }
 ```
 
-**Response (201 Created):**
-```json
-{
-  "costoID": 3,
-  "concepto": "Instalaciones Eléctricas",
-  "montoEstimado": 350000.00,
-  "proyectoID": 1
-}
-```
-
----
-
-#### `GET /api/Estimaciones/{id}` - Obtener Estimación
-
-Obtiene una estimación específica con sus avances.
-
-**Response (200 OK):**
-```json
-{
-  "costoID": 1,
-  "concepto": "Excavación y Cimentación",
-  "montoEstimado": 450000.00,
-  "proyectoID": 1,
-  "avances": [...]
-}
-```
-
----
-
-#### `PUT /api/Estimaciones/{id}` - Actualizar Estimación Completa
-
-**Request Body:**
-```json
-{
-  "costoID": 1,
-  "concepto": "Excavación y Cimentación Actualizada",
-  "montoEstimado": 500000.00,
-  "proyectoID": 1
-}
-```
-
-**Response (204 No Content)**
-
----
-
-#### `PATCH /api/Estimaciones/{id}` - Actualizar Estimación Parcial
-
-**Request Body:**
-```json
-{
-  "montoEstimado": 480000.00
-}
-```
-
-**Response (200 OK):**
-```json
-{
-  "costoID": 1,
-  "concepto": "Excavación y Cimentación",
-  "montoEstimado": 480000.00,
-  "proyectoID": 1
-}
-```
-
----
-
-#### `DELETE /api/Estimaciones/{id}` - Eliminar Estimación
-
-Elimina una estimación (solo si no tiene avances).
-
-**Response (204 No Content)**
-
-**Response Error (400 Bad Request):**
-```json
-{
-  "error": "No se puede eliminar la estimación",
-  "razon": "La estimación tiene avances de obra registrados. Elimínelos primero.",
-  "avancesCount": 2
-}
-```
+**Response (201 Created):** Si el proyecto es tuyo  
+**Response (403 Forbidden):** Si intentas crear en proyecto ajeno
 
 ---
 
 ### 📈 **Avances de Obra**
 
-> [!WARNING]
-> **Todos los endpoints de Avances requieren autenticación JWT.**
-> 
-> Incluye el header: `Authorization: Bearer {tu_token}`
-
 #### `POST /api/Avances` - Registrar Avance
 
-Registra un nuevo avance de obra.
+**🔐 Requiere:** JWT Token  
+**🆕 Validación:** Solo puedes registrar avances en **tus estimaciones**
 
 **Request Body:**
 ```json
@@ -596,454 +492,200 @@ Registra un nuevo avance de obra.
 }
 ```
 
-**Response (201 Created):**
-```json
-{
-  "avanceID": 1,
-  "montoEjecutado": 120000.00,
-  "porcentajeCompletado": 35.5,
-  "fechaRegistro": "2025-11-23T17:30:00",
-  "costoID": 1
-}
-```
-
----
-
-#### `GET /api/Avances/{id}` - Obtener Avance
-
-Obtiene un avance específico.
-
-**Response (200 OK):**
-```json
-{
-  "avanceID": 1,
-  "montoEjecutado": 120000.00,
-  "porcentajeCompletado": 35.5,
-  "fechaRegistro": "2025-11-23T17:30:00",
-  "costoID": 1,
-  "estimacionCosto": {...}
-}
-```
-
----
-
-#### `GET /api/Avances` - Listar Todos los Avances
-
-Obtiene todos los avances registrados.
-
-**Response (200 OK):**
-```json
-[
-  {
-    "avanceID": 1,
-    "montoEjecutado": 120000.00,
-    "porcentajeCompletado": 35.5,
-    "fechaRegistro": "2025-11-23T17:30:00",
-    "costoID": 1
-  }
-]
-```
-
----
-
-#### `GET /api/Avances/porEstimacion/{costoId}` - Avances por Estimación
-
-Obtiene todos los avances de una estimación específica.
-
-**Response (200 OK):**
-```json
-[
-  {
-    "avanceID": 1,
-    "montoEjecutado": 120000.00,
-    "porcentajeCompletado": 35.5,
-    "fechaRegistro": "2025-11-23T17:30:00",
-    "costoID": 1
-  }
-]
-```
-
----
-
-#### `PUT /api/Avances/{id}` - Actualizar Avance Completo
-
-**Request Body:**
-```json
-{
-  "avanceID": 1,
-  "montoEjecutado": 150000.00,
-  "porcentajeCompletado": 45.0,
-  "fechaRegistro": "2025-11-23T17:30:00",
-  "costoID": 1
-}
-```
-
-**Response (204 No Content)**
-
----
-
-#### `PATCH /api/Avances/{id}` - Actualizar Avance Parcial
-
-**Request Body:**
-```json
-{
-  "porcentajeCompletado": 50.0
-}
-```
-
-**Response (200 OK):**
-```json
-{
-  "avanceID": 1,
-  "montoEjecutado": 150000.00,
-  "porcentajeCompletado": 50.0,
-  "fechaRegistro": "2025-11-23T17:30:00",
-  "costoID": 1
-}
-```
-
----
-
-#### `DELETE /api/Avances/{id}` - Eliminar Avance
-
-Elimina un avance de obra.
-
-**Response (204 No Content)**
+**Response (201 Created):** Si la estimación pertenece a tu proyecto  
+**Response (403 Forbidden):** Si intentas registrar en estimación ajena
 
 ---
 
 ## 🧪 Ejemplos de Uso en Postman
 
-### ⚙️ Configuración de JWT en Postman
-
-> [!TIP]
-> **Configurar el Token Globalmente en Postman**
-> 
-> Para no tener que copiar el token manualmente en cada petición:
-> 
-> 1. **Crea una Variable de Entorno:**
->    - En Postman, ve a `Environments` → `Create Environment`
->    - Nombra tu ambiente (ej: "ControlObra Local")
->    - Agrega una variable: `jwt_token` (sin valor inicial)
->    - Guarda el ambiente
-> 
-> 2. **Configura la Autenticación a Nivel de Colección:**
->    - Crea o edita tu colección "ControlObraApi"
->    - Ve a la pestaña `Authorization`
->    - Selecciona `Type: Bearer Token`
->    - En el campo Token escribe: `{{jwt_token}}`
->    - Guarda los cambios
-> 
-> 3. **Guarda el Token Automáticamente al Hacer Login:**
->    - En la petición `POST /api/Auth/login`
->    - Ve a la pestaña `Tests`
->    - Agrega este script:
->      ```javascript
->      var jsonData = pm.response.json();
->      pm.environment.set("jwt_token", jsonData.token);
->      ```
->    - Ahora cada vez que hagas login, el token se guardará automáticamente
-> 
-> 4. **Usa el Ambiente:**
->    - Selecciona tu ambiente "ControlObra Local" en el dropdown superior derecho
->    - Todas las peticiones protegidas usarán automáticamente el token
-
----
-
 ### Flujo Completo de Pruebas
 
-#### 1️⃣ Registrar Usuario
+#### 1️⃣ Login con Usuario Demo
 
 ```
-POST https://localhost:7135/api/Auth/register
+POST http://localhost:5000/api/Auth/login
 Content-Type: application/json
 
 {
-  "name": "Juan Pérez",
-  "email": "juan@test.com",
-  "password": "Test123!"
+  "email": "demo@test.com",
+  "password": "Pass123!"
 }
 ```
 
-**Guardar el token** de la respuesta para usarlo en las siguientes peticiones.
+**Copiar el token** de la respuesta.
 
 ---
 
-#### 2️⃣ Iniciar Sesión (si ya tienes usuario)
+#### 2️⃣ Ver Proyectos del Demo
 
 ```
-POST https://localhost:7135/api/Auth/login
+GET http://localhost:5000/api/Proyectos
+Authorization: Bearer {TOKEN_DEMO}
+```
+
+**Respuesta:** 2 proyectos del usuario demo.
+
+---
+
+#### 3️⃣ Consumir API Externa
+
+```
+GET http://localhost:5000/api/HttpFactory
+Authorization: Bearer {TOKEN_DEMO}
+```
+
+**Respuesta:** 10 usuarios de JSONPlaceholder.
+
+---
+
+#### 4️⃣ Registrar Nuevo Usuario
+
+```
+POST http://localhost:5000/api/Auth/register
 Content-Type: application/json
 
 {
-  "email": "juan@test.com",
-  "password": "Test123!"
+  "name": "Miguel Test",
+  "email": "miguel@test.com",
+  "password": "Pass123!"
 }
 ```
 
+**Guardar el nuevo token** (`TOKEN_MIGUEL`).
+
 ---
 
-#### 3️⃣ Crear un Proyecto (🔐 Requiere Token)
+#### 5️⃣ Validar Aislamiento de Datos
 
 ```
-POST https://localhost:7135/api/Proyectos
+GET http://localhost:5000/api/Proyectos
+Authorization: Bearer {TOKEN_MIGUEL}
+```
+
+**Respuesta:** `[]` (lista vacía, porque Miguel no tiene proyectos aún).
+
+---
+
+#### 6️⃣ Crear Proyecto como Miguel
+
+```
+POST http://localhost:5000/api/Proyectos
+Authorization: Bearer {TOKEN_MIGUEL}
 Content-Type: application/json
-Authorization: Bearer {TU_TOKEN_AQUI}
 
 {
-  "nombreObra": "Edificio Corporativo",
-  "ubicacion": "Av. Principal 123",
-  "fechaInicio": "2025-01-01T00:00:00"
+  "nombreObra": "Proyecto de Miguel",
+  "ubicacion": "Ciudad X",
+  "fechaInicio": "2025-03-01"
 }
 ```
 
-**Guardar el `proyectoID`** de la respuesta.
+**Respuesta:** Proyecto con `userId: 2` (Miguel).
 
 ---
 
-#### 4️⃣ Crear Estimaciones de Costo (🔐 Requiere Token)
+#### 7️⃣ Miguel Intenta Ver Proyecto del Demo (FALLA)
 
 ```
-POST https://localhost:7135/api/Estimaciones
-Content-Type: application/json
-Authorization: Bearer {TU_TOKEN_AQUI}
-
-{
-  "concepto": "Excavación",
-  "montoEstimado": 100000.00,
-  "proyectoID": 1
-}
+GET http://localhost:5000/api/Proyectos/1
+Authorization: Bearer {TOKEN_MIGUEL}
 ```
 
-Repite para crear más estimaciones (ej: "Estructura", "Acabados").
-
-**Guardar el `costoID`** de cada estimación.
+**Respuesta:** `404 Not Found` (no puede ver proyectos ajenos).
 
 ---
 
-#### 5️⃣ Registrar Avances de Obra (🔐 Requiere Token)
-
-```
-POST https://localhost:7135/api/Avances
-Content-Type: application/json
-Authorization: Bearer {TU_TOKEN_AQUI}
-
-{
-  "montoEjecutado": 25000.00,
-  "porcentajeCompletado": 25.0,
-  "costoID": 1
-}
-```
-
----
-
-#### 6️⃣ Consultar Desviación Financiera (🔐 Requiere Token)
-
-```
-GET https://localhost:7135/api/Proyectos/Desviacion/1
-Authorization: Bearer {TU_TOKEN_AQUI}
-```
-
-Esta petición te mostrará el análisis de riesgo del proyecto.
-
----
-
-#### 7️⃣ Listar Todos los Proyectos (🔐 Requiere Token)
-
-```
-GET https://localhost:7135/api/Proyectos
-Authorization: Bearer {TU_TOKEN_AQUI}
-```
-
----
-
-### 📦 Colección de Postman
-
-Puedes importar esta colección base:
-
-```json
-{
-  "info": {
-    "name": "ControlObraApi",
-    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
-  },
-  "item": [
-    {
-      "name": "Auth",
-      "item": [
-        {
-          "name": "Register",
-          "request": {
-            "method": "POST",
-            "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"name\": \"Test User\",\n  \"email\": \"test@test.com\",\n  \"password\": \"Test123!\"\n}",
-              "options": { "raw": { "language": "json" } }
-            },
-            "url": "{{baseUrl}}/api/Auth/register"
-          }
-        },
-        {
-          "name": "Login",
-          "request": {
-            "method": "POST",
-            "header": [],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"email\": \"test@test.com\",\n  \"password\": \"Test123!\"\n}",
-              "options": { "raw": { "language": "json" } }
-            },
-            "url": "{{baseUrl}}/api/Auth/login"
-          }
-        }
-      ]
-    }
-  ],
-  "variable": [
-    {
-      "key": "baseUrl",
-      "value": "https://localhost:7135"
-    }
-  ]
-}
-```
-
----
-
-## 📁 Estructura del Proyecto
+## 📊 Estructura del Proyecto
 
 ```
 ControlObraApi/
-│
 ├── Controllers/
-│   ├── AuthController.cs          # Autenticación (register, login)
-│   ├── ProyectosController.cs     # CRUD proyectos + análisis desviación
-│   ├── EstimacionesController.cs  # CRUD estimaciones de costo
-│   └── AvancesController.cs       # CRUD avances de obra
-│
+│   ├── AuthController.cs          # Autenticación JWT
+│   ├── ProyectosController.cs     # CRUD + Ownership
+│   ├── EstimacionesController.cs  # CRUD + Ownership
+│   ├── AvancesController.cs       # CRUD + Ownership
+│   └── HttpFactoryController.cs   # 🆕 API Externa
 ├── Models/
-│   ├── AppDbContext.cs           # Contexto de Entity Framework
-│   ├── User.cs                   # Modelo de usuario
-│   ├── Proyecto.cs               # Modelo de proyecto
-│   ├── EstimacionCosto.cs        # Modelo de estimación
-│   └── AvanceObra.cs             # Modelo de avance
-│
+│   ├── User.cs                    # Usuario con email único
+│   ├── Proyecto.cs                # 🆕 Con UserId
+│   ├── EstimacionCosto.cs         # Presupuesto
+│   ├── AvanceObra.cs              # Avances
+│   └── AppDbContext.cs            # 🆕 Seed data + relaciones
 ├── DTOs/
-│   ├── RegisterDto.cs            # DTO para registro
-│   ├── LoginDto.cs               # DTO para login
-│   ├── ProyectoPatchDTO.cs       # DTO para actualización parcial proyecto
+│   ├── LoginDto.cs
+│   ├── RegisterDto.cs
 │   ├── EstimacionCostoCreateDTO.cs
-│   ├── EstimacionPatchDTO.cs
-│   ├── AvanceObraCreateDTO.cs
-│   └── AvancePatchDTO.cs
-│
+│   └── ...
 ├── Validators/
 │   ├── EstimacionCostoValidator.cs
 │   └── AvanceObraValidator.cs
-│
-├── Migrations/
-│   └── [Archivos de migración automáticos]
-│
-├── Program.cs                    # Configuración principal
-├── appsettings.json             # Configuración de la app
-└── ControlObraApi.csproj        # Archivo de proyecto
+├── Migrations/                     # 🆕 InitialCreateWithOwnershipAndHttpFactory
+├── Program.cs                      # 🆕 HttpClientFactory configurado
+└── appsettings.json                # 🆕 ExternalApis configuradas
 ```
 
 ---
 
-## 🗄️ Modelos de Datos
+## 🔒 Seguridad
 
-### User
-```csharp
-{
-  UserId: int (PK),
-  Name: string,
-  Email: string (unique),
-  Username: string,
-  PasswordHash: string,
-  Role: string
-}
-```
-
-### Proyecto
-```csharp
-{
-  ProyectoID: int (PK),
-  NombreObra: string,
-  Ubicacion: string,
-  FechaInicio: DateTime,
-  Estimaciones: ICollection<EstimacionCosto>
-}
-```
-
-### EstimacionCosto
-```csharp
-{
-  CostoID: int (PK),
-  Concepto: string,
-  MontoEstimado: decimal(18,2),
-  ProyectoID: int (FK),
-  RowVersion: byte[],
-  Avances: ICollection<AvanceObra>
-}
-```
-
-### AvanceObra
-```csharp
-{
-  AvanceID: int (PK),
-  MontoEjecutado: decimal(18,2),
-  PorcentajeCompletado: decimal(5,2),
-  FechaRegistro: DateTime,
-  CostoID: int (FK)
-}
-```
+- ✅ **Contraseñas**: Hasheadas con BCrypt (factor 11)
+- ✅ **Tokens JWT**: Firmados con HS512, válidos 24h
+- ✅ **CORS**: Configurado para `http://localhost:4200` (Angular)
+- ✅ **Validación**: FluentValidation + Data Annotations
+- ✅ **SQL Injection**: Prevenido por EF Core parametrizado
+- ✅ **🆕 Ownership**: Validación automática en todos los endpoints CRUD
 
 ---
 
-## 🐛 Solución de Problemas Comunes
+## 🎯 Casos de Uso
 
-### Error: "No se puede conectar a SQL Server"
+### Caso 1: Constructora con Múltiples Jefes de Proyecto
 
-1. Verifica que SQL Server esté corriendo
-2. Revisa el puerto en la cadena de conexión
-3. Verifica las credenciales
-4. Asegúrate que la autenticación SQL está habilitada
+Cada jefe de proyecto:
+- Se registra con su email corporativo
+- Gestiona solo **sus proyectos** asignados
+- No puede ver ni modificar proyectos de otros jefes
 
-### Error: "Database does not exist"
+### Caso 2: Cliente/Profesor Revisando el Sistema
 
-```bash
-dotnet ef database update
-```
-
-### Error: "Authentication failed"
-
-Revisa que `TrustServerCertificate=True` esté en la cadena de conexión.
+Usa las credenciales demo:
+- Email: `demo@test.com`
+- Password: `Pass123!`
+- Ve 2 proyectos de ejemplo con datos completos
 
 ---
 
-## 📝 Notas Importantes
+## 📝 Changelog
 
-- Los tokens JWT expiran en **24 horas**
-- Las contraseñas se encriptan con **BCrypt**
-- La validación de datos usa **FluentValidation**
-- Los endpoints usan **restricciones de ruta** (`{id:int}`)
-- Se implementa **Optimistic Concurrency** con `RowVersion`
+### v2.0 (2025-11-24)
+- 🆕 **Sistema multi-usuario con ownership**
+- 🆕 **Consumo de API externa JSONPlaceholder**
+- 🆕 **HttpClientFactory pattern**
+- 🆕 **Usuario demo con seed data**
+- 🆕 **Claims JWT extendidos (UserId)**
+- 🆕 **Validaciones de ownership en todos los controladores**
+- 🆕 **Migración unificada: InitialCreateWithOwnershipAndHttpFactory**
+
+### v1.0 (2025-11-21)
+- ✅ CRUD completo de Proyectos, Estimaciones, Avances
+- ✅ Autenticación JWT básica
+- ✅ Análisis de desviación financiera
+- ✅ Validación con FluentValidation
+
+---
+
+## 👥 Autor
+
+**Miguel Rodríguez**  
+GitHub: [@DRMiguel25](https://github.com/DRMiguel25)
 
 ---
 
 ## 📄 Licencia
 
-Este proyecto fue desarrollado con fines académicos.
+Este proyecto es de código abierto para fines educativos.
 
 ---
 
-## 👨‍💻 Autor
-
-**[Miguel Angel Diaz Rivera]**  
-Sistemas Propietarios 
-Fecha: Noviembre 2025
-
----
-
+**⭐ Si este proyecto te fue útil, dale una estrella en GitHub!**

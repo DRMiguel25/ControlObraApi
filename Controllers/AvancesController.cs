@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace ControlObraApi.Controllers
 {
@@ -26,12 +27,33 @@ namespace ControlObraApi.Controllers
             _validator = validator;
         }
 
+        // 🆕 Helper: Obtener ID del usuario autenticado
+        private int GetCurrentUserId()
+        {
+            return int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
+        }
+
+        // 🆕 Helper: Validar ownership via EstimacionCosto -> Proyecto
+        private async Task<bool> UserOwnsEstimacionAsync(int costoId)
+        {
+            var userId = GetCurrentUserId();
+            return await _context.EstimacionesCosto
+                .Include(e => e.Proyecto)
+                .AnyAsync(e => e.CostoID == costoId && e.Proyecto.UserId == userId);
+        }
+
         // -----------------------------------------------------------------
         // POST: Registrar Avance de Obra (C - CREATE) - CON DTO
         // -----------------------------------------------------------------
         [HttpPost]
         public async Task<IActionResult> PostAvanceObra([FromBody] AvanceObraCreateDTO dto)
         {
+            // 🆕 Validar ownership de la estimación
+            if (!await UserOwnsEstimacionAsync(dto.CostoID))
+            {
+                return Forbid();
+            }
+
             // 1. Convertir DTO a entidad
             var avance = new AvanceObra
             {
@@ -69,11 +91,18 @@ namespace ControlObraApi.Controllers
             // Incluye la relación con EstimacionCosto para ver el contexto completo
             var avance = await _context.AvancesObra
                 .Include(a => a.EstimacionCosto)
+                    .ThenInclude(e => e.Proyecto)
                 .FirstOrDefaultAsync(a => a.AvanceID == id);
 
             if (avance == null)
             {
                 return NotFound($"Avance con ID {id} no encontrado.");
+            }
+
+            // 🆕 Validar ownership
+            if (!await UserOwnsEstimacionAsync(avance.CostoID))
+            {
+                return Forbid();
             }
 
             return Ok(avance);
@@ -97,22 +126,33 @@ namespace ControlObraApi.Controllers
         // CORRECCIÓN CLAVE: Se especifica que el ID debe ser un entero
         // -----------------------------------------------------------------
         [HttpPut("{id:int}")]
-        public async Task<IActionResult> PutAvanceObra(int id, [FromBody] AvanceObra avance)
+        public async Task<IActionResult> PutAvanceObra(int id, [FromBody] AvanceObraUpdateDTO dto)
         {
-            if (id != avance.AvanceID)
+            if (id != dto.AvanceID)
             {
                 return BadRequest("El ID de la ruta no coincide con el ID del cuerpo.");
             }
 
-            // Validación
-            ValidationResult validationResult = await _validator.ValidateAsync(avance);
-            if (!validationResult.IsValid)
+            // 1. Buscar la entidad existente
+            var avanceExistente = await _context.AvancesObra.FindAsync(id);
+            if (avanceExistente == null)
             {
-                return BadRequest(validationResult.Errors.Select(e => e.ErrorMessage));
+                return NotFound("Avance no encontrado.");
             }
 
-            _context.Attach(avance).State = EntityState.Modified;
+            // 2. Validar ownership (seguridad)
+            if (!await UserOwnsEstimacionAsync(avanceExistente.CostoID))
+            {
+                return Forbid();
+            }
 
+            // 3. Actualizar campos
+            avanceExistente.MontoEjecutado = dto.MontoEjecutado;
+            avanceExistente.PorcentajeCompletado = dto.PorcentajeCompletado;
+            // No actualizamos FechaRegistro ni CostoID en un PUT estándar, 
+            // o si se requiere, se puede actualizar CostoID si es válido.
+            
+            // 4. Guardar cambios
             try
             {
                 await _context.SaveChangesAsync();
@@ -123,7 +163,7 @@ namespace ControlObraApi.Controllers
                 {
                     return NotFound("Avance no encontrado.");
                 }
-                return StatusCode(409, "Conflicto de Concurrencia.");
+                throw;
             }
 
             return NoContent(); // 204 No Content

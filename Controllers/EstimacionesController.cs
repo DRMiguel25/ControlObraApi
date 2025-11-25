@@ -7,6 +7,7 @@ using FluentValidation.Results;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace ControlObraApi.Controllers
 {
@@ -24,12 +25,31 @@ namespace ControlObraApi.Controllers
             _validator = validator;
         }
 
+        // 🆕 Helper: Obtener ID del usuario autenticado
+        private int GetCurrentUserId()
+        {
+            return int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
+        }
+
+        // 🆕 Helper: Validar que el usuario sea dueño del proyecto
+        private async Task<bool> UserOwnsProyectoAsync(int proyectoId)
+        {
+            var userId = GetCurrentUserId();
+            return await _context.Proyectos.AnyAsync(p => p.ProyectoID == proyectoId && p.UserId == userId);
+        }
+
         // -----------------------------------------------------------------
         // POST: Registrar Presupuesto (C - CREATE) - CON DTO
         // -----------------------------------------------------------------
         [HttpPost]
         public async Task<IActionResult> PostEstimacionCosto([FromBody] EstimacionCostoCreateDTO dto)
         {
+            // 🆕 Validar ownership del proyecto
+            if (!await UserOwnsProyectoAsync(dto.ProyectoID))
+            {
+                return Forbid();  // 403 - No eres dueño del proyecto
+            }
+
             var estimacion = new EstimacionCosto
             {
                 Concepto = dto.Concepto,
@@ -60,12 +80,19 @@ namespace ControlObraApi.Controllers
         public async Task<IActionResult> GetEstimacionCosto(int id)
         {
             var estimacion = await _context.EstimacionesCosto
+                .Include(e => e.Proyecto)  // 🆕 Include para validar ownership
                 .Include(e => e.Avances) 
                 .FirstOrDefaultAsync(e => e.CostoID == id);
 
             if (estimacion == null)
             {
                 return NotFound();
+            }
+
+            // 🆕 Validar ownership via proyecto
+            if (!await UserOwnsProyectoAsync(estimacion.ProyectoID))
+            {
+                return Forbid();
             }
 
             return Ok(estimacion);
@@ -81,6 +108,12 @@ namespace ControlObraApi.Controllers
             if (id != estimacion.CostoID)
             {
                 return BadRequest("El ID de la ruta no coincide con el ID del cuerpo.");
+            }
+            
+            // 🆕 Validar ownership antes de actualizar
+            if (!await UserOwnsProyectoAsync(estimacion.ProyectoID))
+            {
+                return Forbid();
             }
             
             ValidationResult validationResult = await _validator.ValidateAsync(estimacion);
@@ -121,6 +154,12 @@ namespace ControlObraApi.Controllers
                 return NotFound($"Estimación con ID {id} no encontrada.");
             }
             
+            // 🆕 Validar ownership
+            if (!await UserOwnsProyectoAsync(estimacionModelo.ProyectoID))
+            {
+                return Forbid();
+            }
+            
             if (patchDto.Concepto != null)
             {
                 estimacionModelo.Concepto = patchDto.Concepto;
@@ -154,6 +193,12 @@ namespace ControlObraApi.Controllers
             if (estimacion == null)
             {
                 return NotFound($"Estimación con ID {id} no encontrada.");
+            }
+
+            // 🆕 Validar ownership
+            if (!await UserOwnsProyectoAsync(estimacion.ProyectoID))
+            {
+                return Forbid();
             }
 
             // Validar que no tenga avances

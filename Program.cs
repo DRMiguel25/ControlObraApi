@@ -40,6 +40,14 @@ builder.Services.AddControllers()
 builder.Services.AddScoped<IValidator<EstimacionCosto>, EstimacionCostoValidator>();
 builder.Services.AddScoped<IValidator<AvanceObra>, AvanceObraValidator>();
 
+// D. HttpClientFactory - Consumo de APIs Externas (JSONPlaceholder)
+builder.Services.AddHttpClient("jsonplaceholder", client =>
+{
+    client.BaseAddress = new Uri(builder.Configuration["ExternalApis:Base_url"]!);
+    client.DefaultRequestHeaders.Add("Accept", "application/json");
+    client.Timeout = TimeSpan.FromSeconds(30);
+});
+
 // JWT Configuration
 builder.Services.AddAuthentication(Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
