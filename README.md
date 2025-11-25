@@ -161,7 +161,7 @@ Gestión eficiente de conexiones HTTP para el consumo de APIs externas, evitando
 El siguiente diagrama muestra el flujo completo del sistema ControlObraApi, desde la autenticación hasta la gestión de recursos:
 
 ![Diagrama de Flujo General](https://drive.google.com/file/d/1dTLiU6o3rTlWDaDcif5tZ4cwjJ642p5Q/view?usp=drive_link)
-
+https://drive.google.com/file/d/1dTLiU6o3rTlWDaDcif5tZ4cwjJ642p5Q/view?usp=drive_link
 **Componentes principales del diagrama:**
 
 1. **Autenticación**: Flujo de registro y login con validación JWT
