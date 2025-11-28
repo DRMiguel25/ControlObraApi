@@ -1,11 +1,77 @@
 {
   "Version": 1,
-  "Hash": "HoYCXWmydsI78nPvg+OH7OYa1r0vCXPeaYXi1j+0S2g=",
+  "Hash": "P8n7CcR8+jhLeEnw4aOvV1m3URvatI8s3yTxYS5rq7c=",
   "Source": "ControlObraApi",
   "BasePath": "_content/ControlObraApi",
   "Mode": "Default",
   "ManifestType": "Build",
   "ReferencedProjectsConfiguration": [],
-  "DiscoveryPatterns": [],
-  "Assets": []
+  "DiscoveryPatterns": [
+    {
+      "Name": "ControlObraApi/wwwroot",
+      "Source": "ControlObraApi",
+      "ContentRoot": "/home/migue/Documentos/materias/sistemas propietarios/tercero/ControlObraApi/ControlObraApi/wwwroot/",
+      "BasePath": "_content/ControlObraApi",
+      "Pattern": "**"
+    }
+  ],
+  "Assets": [
+    {
+      "Identity": "/home/migue/Documentos/materias/sistemas propietarios/tercero/ControlObraApi/ControlObraApi/wwwroot/uploads/25ee5cbc-2097-43fd-851d-82f36f5dad34.png",
+      "SourceId": "ControlObraApi",
+      "SourceType": "Discovered",
+      "ContentRoot": "/home/migue/Documentos/materias/sistemas propietarios/tercero/ControlObraApi/ControlObraApi/wwwroot/",
+      "BasePath": "_content/ControlObraApi",
+      "RelativePath": "uploads/25ee5cbc-2097-43fd-851d-82f36f5dad34.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot/uploads/25ee5cbc-2097-43fd-851d-82f36f5dad34.png"
+    },
+    {
+      "Identity": "/home/migue/Documentos/materias/sistemas propietarios/tercero/ControlObraApi/ControlObraApi/wwwroot/uploads/52c45c92-c8fb-4ba7-966a-14c8ff5d738d.png",
+      "SourceId": "ControlObraApi",
+      "SourceType": "Discovered",
+      "ContentRoot": "/home/migue/Documentos/materias/sistemas propietarios/tercero/ControlObraApi/ControlObraApi/wwwroot/",
+      "BasePath": "_content/ControlObraApi",
+      "RelativePath": "uploads/52c45c92-c8fb-4ba7-966a-14c8ff5d738d.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot/uploads/52c45c92-c8fb-4ba7-966a-14c8ff5d738d.png"
+    },
+    {
+      "Identity": "/home/migue/Documentos/materias/sistemas propietarios/tercero/ControlObraApi/ControlObraApi/wwwroot/uploads/5bb3a360-0940-4669-8676-cd635e212a3a.png",
+      "SourceId": "ControlObraApi",
+      "SourceType": "Discovered",
+      "ContentRoot": "/home/migue/Documentos/materias/sistemas propietarios/tercero/ControlObraApi/ControlObraApi/wwwroot/",
+      "BasePath": "_content/ControlObraApi",
+      "RelativePath": "uploads/5bb3a360-0940-4669-8676-cd635e212a3a.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot/uploads/5bb3a360-0940-4669-8676-cd635e212a3a.png"
+    }
+  ]
 }

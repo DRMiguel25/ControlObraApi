@@ -1,0 +1,33 @@
+{
+  "Files": [
+    {
+      "Id": "/home/migue/Documentos/materias/sistemas propietarios/tercero/ControlObraApi/ControlObraApi/wwwroot/uploads/25ee5cbc-2097-43fd-851d-82f36f5dad34.png",
+      "PackagePath": "staticwebassets/uploads/25ee5cbc-2097-43fd-851d-82f36f5dad34.png"
+    },
+    {
+      "Id": "/home/migue/Documentos/materias/sistemas propietarios/tercero/ControlObraApi/ControlObraApi/wwwroot/uploads/52c45c92-c8fb-4ba7-966a-14c8ff5d738d.png",
+      "PackagePath": "staticwebassets/uploads/52c45c92-c8fb-4ba7-966a-14c8ff5d738d.png"
+    },
+    {
+      "Id": "/home/migue/Documentos/materias/sistemas propietarios/tercero/ControlObraApi/ControlObraApi/wwwroot/uploads/5bb3a360-0940-4669-8676-cd635e212a3a.png",
+      "PackagePath": "staticwebassets/uploads/5bb3a360-0940-4669-8676-cd635e212a3a.png"
+    },
+    {
+      "Id": "obj/Debug/net8.0/staticwebassets/msbuild.ControlObraApi.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj/Debug/net8.0/staticwebassets/msbuild.build.ControlObraApi.props",
+      "PackagePath": "build\\ControlObraApi.props"
+    },
+    {
+      "Id": "obj/Debug/net8.0/staticwebassets/msbuild.buildMultiTargeting.ControlObraApi.props",
+      "PackagePath": "buildMultiTargeting\\ControlObraApi.props"
+    },
+    {
+      "Id": "obj/Debug/net8.0/staticwebassets/msbuild.buildTransitive.ControlObraApi.props",
+      "PackagePath": "buildTransitive\\ControlObraApi.props"
+    }
+  ],
+  "ElementsToRemove": []
+}

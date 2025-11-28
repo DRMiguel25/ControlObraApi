@@ -30,5 +30,8 @@ namespace ControlObraApi.Models
 
         // Navegación (opcional - nullable)
         public EstimacionCosto? EstimacionCosto { get; set; }
+
+        // Fotos de evidencia
+        public ICollection<AvanceFoto>? Fotos { get; set; }
     }
 }

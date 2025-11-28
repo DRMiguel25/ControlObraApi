@@ -39,7 +39,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"nombreObra\": \"Edificio Corporativo\",\n  \"ubicacion\": \"Av. Principal 123\",\n  \"fechaInicio\": \"2025-01-01T00:00:00\"\n}",
+							"raw": "{\n  \"nombreObra\": \"Mirador  \",\n  \"ubicacion\": \"Av. Principal 56\",\n  \"fechaInicio\": \"2025-01-01T00:00:00\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -59,7 +59,7 @@
 					"response": []
 				},
 				{
-					"name": "GET All Proyectos",
+					"name": "All Proyectos",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -76,58 +76,147 @@
 					"response": []
 				},
 				{
-					"name": "GET Proyecto by ID",
+					"name": "Proyecto by ID",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{url}}/Proyectos/:proyectoId/Avances",
+							"raw": "{{url}}/Proyectos/5001",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Proyectos",
-								":proyectoId",
-								"Avances"
-							],
-							"variable": [
-								{
-									"key": "proyectoId"
-								}
+								"5001"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "PUT Update Proyecto",
+					"name": "Update Proyecto",
 					"request": {
-						"method": "GET",
-						"header": []
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \n  \"proyectoID\": 5001,\n  \"nombreObra\": \"Construcción Edificio Central - Actualizado\",\n  \"ubicacion\": \"Av. Principal 456\",\n  \"fechaInicio\": \"2025-02-01T00:00:00\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/Proyectos/5001",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Proyectos",
+								"5001"
+							]
+						}
 					},
 					"response": []
 				},
 				{
-					"name": "PATCH Update Proyecto Parcial",
+					"name": "Update Proyecto Parcial",
 					"request": {
-						"method": "GET",
-						"header": []
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nombreObra\": \"Nuevo Nombre del Proyecto\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/Proyectos/5001",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Proyectos",
+								"5001"
+							]
+						}
 					},
 					"response": []
 				},
 				{
-					"name": "DELETE Proyecto",
+					"name": "Proyecto",
 					"request": {
-						"method": "GET",
-						"header": []
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/Proyectos/5001",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Proyectos",
+								"5001"
+							]
+						}
 					},
 					"response": []
 				},
 				{
-					"name": "GET Desviación Presupuestal",
+					"name": "Desviación Presupuestal",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
-						"header": []
+						"header": [],
+						"url": {
+							"raw": "{{url}}/Proyectos/Desviacion/5001",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Proyectos",
+								"Desviacion",
+								"5001"
+							]
+						}
 					},
 					"response": []
 				}
@@ -139,16 +228,79 @@
 				{
 					"name": "Register",
 					"request": {
-						"method": "GET",
-						"header": []
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \" Maria\",\n  \"email\": \"maria@example.com\",\n  \"password\": \"maria123\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/Auth/register",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Auth",
+								"register"
+							]
+						}
 					},
 					"response": []
 				},
 				{
 					"name": "Login",
 					"request": {
-						"method": "GET",
-						"header": []
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"maria@example.com\",\n  \"password\": \"maria123\"\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/Auth/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"Auth",
+								"login"
+							]
+						}
 					},
 					"response": []
 				}
@@ -158,10 +310,44 @@
 			"name": "Estimaciones",
 			"item": [
 				{
-					"name": "POST Create Estimación",
+					"name": "Create Estimación",
 					"request": {
-						"method": "GET",
-						"header": []
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"concepto\": \"Cimentación\",\n  \"montoEstimado\": 50000.00,\n  \"proyectoID\": 5002\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/Estimaciones",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Estimaciones"
+							]
+						}
 					},
 					"response": []
 				},
@@ -176,24 +362,114 @@
 				{
 					"name": "PUT Update Estimación",
 					"request": {
-						"method": "GET",
-						"header": []
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"costoID\": 5002,\n  \"concepto\": \"Cimentación Reforzada\",\n  \"montoEstimado\": 55000.00,\n  \"proyectoID\": 5002\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/Estimaciones/5002",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Estimaciones",
+								"5002"
+							]
+						}
 					},
 					"response": []
 				},
 				{
-					"name": "PATCH Update Estimación Parcial",
+					"name": "Update Estimación Parcial",
 					"request": {
-						"method": "GET",
-						"header": []
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"montoEstimado\": 60000.00\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/Estimaciones/5002",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Estimaciones",
+								"5002"
+							]
+						}
 					},
 					"response": []
 				},
 				{
 					"name": "DELETE Estimación",
 					"request": {
-						"method": "GET",
-						"header": []
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/Estimaciones/5002\n",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Estimaciones",
+								"5002\n"
+							]
+						}
 					},
 					"response": []
 				}
@@ -203,55 +479,219 @@
 			"name": "Avances",
 			"item": [
 				{
-					"name": "POST Create Avance",
+					"name": "Create Avance",
 					"request": {
-						"method": "GET",
-						"header": []
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"montoEjecutado\": 15000.00,\n  \"porcentajeCompletado\": 30.0,\n  \"costoID\": 5003\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/Avances",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Avances"
+							]
+						}
 					},
 					"response": []
 				},
 				{
-					"name": "GET All Avances",
+					"name": "All Avances",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
-						"header": []
+						"header": [],
+						"url": {
+							"raw": "{{url}}/Avances",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Avances"
+							]
+						}
 					},
 					"response": []
 				},
 				{
-					"name": "GET Avance by ID",
+					"name": "Avance by ID",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
-						"header": []
+						"header": [],
+						"url": {
+							"raw": "{{url}}/Avances/4001",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Avances",
+								"4001"
+							]
+						}
 					},
 					"response": []
 				},
 				{
-					"name": "GET Avances por Estimación",
+					"name": "Avances por Estimación",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
-						"header": []
+						"header": [],
+						"url": {
+							"raw": "{{url}}/Avances/porEstimacion/4001",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Avances",
+								"porEstimacion",
+								"4001"
+							]
+						}
 					},
 					"response": []
 				},
 				{
-					"name": "PUT Update Avance",
+					"name": "Update Avance",
 					"request": {
-						"method": "GET",
-						"header": []
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"avanceID\": 4001,\n  \"montoEjecutado\": 18000.00,\n  \"porcentajeCompletado\": 35.0\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/Avances/4001",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Avances",
+								"4001"
+							]
+						}
 					},
 					"response": []
 				},
 				{
-					"name": "PATCH Update Avance Parcial",
+					"name": "Update Avance Parcial",
 					"request": {
-						"method": "GET",
-						"header": []
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"porcentajeCompletado\": 40.0\n}\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/Avances/4001",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Avances",
+								"4001"
+							]
+						}
 					},
 					"response": []
 				},
 				{
-					"name": "DELETE Avance",
+					"name": "Avance",
 					"request": {
 						"method": "GET",
 						"header": []

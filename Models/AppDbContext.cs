@@ -11,6 +11,7 @@ namespace ControlObraApi.Models
         public DbSet<Proyecto> Proyectos { get; set; }
         public DbSet<EstimacionCosto> EstimacionesCosto { get; set; }
         public DbSet<AvanceObra> AvancesObra { get; set; }
+        public DbSet<AvanceFoto> AvanceFotos { get; set; }
         public DbSet<User> Users { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

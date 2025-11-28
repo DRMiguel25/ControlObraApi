@@ -1,0 +1,320 @@
+{
+	"info": {
+		"_postman_id": "9c7b46e7-d286-4aa5-a006-3bce503e6238",
+		"name": "ControlObraApi",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "41482883",
+		"_collection_link": "https://exploretech-9570.postman.co/workspace/Proyectoobrasss~df0efb52-7742-4691-a614-e41d87705289/collection/41482883-9c7b46e7-d286-4aa5-a006-3bce503e6238?action=share&source=collection_link&creator=41482883"
+	},
+	"item": [
+		{
+			"name": "Proyectos",
+			"item": [
+				{
+					"name": "Create Proyecto",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nombreObra\": \"Edificio Corporativo\",\n  \"ubicacion\": \"Av. Principal 123\",\n  \"fechaInicio\": \"2025-01-01T00:00:00\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/Proyectos",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Proyectos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET All Proyectos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/Proyectos",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Proyectos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET Proyecto by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/Proyectos/:proyectoId/Avances",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Proyectos",
+								":proyectoId",
+								"Avances"
+							],
+							"variable": [
+								{
+									"key": "proyectoId"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT Update Proyecto",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "PATCH Update Proyecto Parcial",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE Proyecto",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "GET Desviación Presupuestal",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Register",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Estimaciones",
+			"item": [
+				{
+					"name": "POST Create Estimación",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "GET Estimación by ID",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "PUT Update Estimación",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "PATCH Update Estimación Parcial",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE Estimación",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Avances",
+			"item": [
+				{
+					"name": "POST Create Avance",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "GET All Avances",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "GET Avance by ID",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "GET Avances por Estimación",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "PUT Update Avance",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "PATCH Update Avance Parcial",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE Avance",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "url",
+			"value": ""
+		},
+		{
+			"key": "token",
+			"value": ""
+		},
+		{
+			"key": "proyectoId",
+			"value": ""
+		},
+		{
+			"key": "estimacionId",
+			"value": ""
+		},
+		{
+			"key": "avanceId",
+			"value": ""
+		}
+	]
+}

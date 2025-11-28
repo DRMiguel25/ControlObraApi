@@ -81,7 +81,8 @@ namespace ControlObraApi.Controllers
         {
             var estimacion = await _context.EstimacionesCosto
                 .Include(e => e.Proyecto)  // 🆕 Include para validar ownership
-                .Include(e => e.Avances) 
+                .Include(e => e.Avances)
+                    .ThenInclude(a => a.Fotos)
                 .FirstOrDefaultAsync(e => e.CostoID == id);
 
             if (estimacion == null)

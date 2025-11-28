@@ -81,6 +81,9 @@ app.UseRouting();
 // 2. USO DE CORS (Debe ir DESPUÉS de UseRouting)
 app.UseCors(MyAllowSpecificOrigins);
 
+// 2.1 Archivos Estáticos (Para fotos)
+app.UseStaticFiles();
+
 // 3. AUTORIZACIÓN
 app.UseAuthentication();
 app.UseAuthorization();

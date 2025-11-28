@@ -290,3 +290,5 @@
 /home/migue/Documentos/materias/sistemas propietarios/tercero/ControlObraApi/ControlObraApi/obj/Debug/net8.0/ref/ControlObraApi.dll
 /home/migue/Documentos/materias/sistemas propietarios/tercero/ControlObraApi/ControlObraApi/bin/Debug/net8.0/BCrypt.Net-Next.dll
 /home/migue/Documentos/materias/sistemas propietarios/tercero/ControlObraApi/ControlObraApi/bin/Debug/net8.0/Microsoft.AspNetCore.Authentication.JwtBearer.dll
+/home/migue/Documentos/materias/sistemas propietarios/tercero/ControlObraApi/ControlObraApi/bin/Debug/net8.0/ControlObraApi.postman_collection.json
+/home/migue/Documentos/materias/sistemas propietarios/tercero/ControlObraApi/ControlObraApi/bin/Debug/net8.0/ControlObraApi.staticwebassets.runtime.json

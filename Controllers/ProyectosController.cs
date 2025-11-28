@@ -40,6 +40,7 @@ namespace ControlObraApi.Controllers
             var proyecto = await _context.Proyectos
                 .Include(p => p.Estimaciones)
                     .ThenInclude(e => e.Avances)
+                        .ThenInclude(a => a.Fotos)
                 .FirstOrDefaultAsync(p => p.ProyectoID == id && p.UserId == userId);  // 🆕 Filtro ownership
 
             if (proyecto == null)
@@ -61,6 +62,8 @@ namespace ControlObraApi.Controllers
             var proyectos = await _context.Proyectos
                 .Where(p => p.UserId == userId)  // 🆕 Filtro: solo proyectos del usuario
                 .Include(p => p.Estimaciones)
+                    .ThenInclude(e => e.Avances)
+                        .ThenInclude(a => a.Fotos)
                 .ToListAsync();
             return Ok(proyectos);
         }
