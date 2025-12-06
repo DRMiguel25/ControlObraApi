@@ -2,16 +2,102 @@
 	"info": {
 		"_postman_id": "9c7b46e7-d286-4aa5-a006-3bce503e6238",
 		"name": "ControlObraApi",
+		"description": "Colección completa de la API de Control de Obras v2.0 con sistema multi-usuario y consumo de APIs externas",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "41482883",
-		"_collection_link": "https://exploretech-9570.postman.co/workspace/Proyectoobrasss~df0efb52-7742-4691-a614-e41d87705289/collection/41482883-9c7b46e7-d286-4aa5-a006-3bce503e6238?action=share&source=collection_link&creator=41482883"
+		"_exporter_id": "41482883"
 	},
 	"item": [
 		{
-			"name": "Proyectos",
+			"name": "Auth",
 			"item": [
 				{
-					"name": "Create Proyecto",
+					"name": "Register",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Maria\",\n  \"email\": \"maria@example.com\",\n  \"password\": \"maria123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/Auth/register",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Auth",
+								"register"
+							]
+						},
+						"description": "Registra un nuevo usuario en el sistema. El email debe ser único."
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Guardar automáticamente el token JWT",
+									"if (pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.collectionVariables.set(\"token\", jsonData.token);",
+									"    console.log(\"✅ Token guardado automáticamente\");",
+									"} else {",
+									"    console.log(\"❌ Login falló, token no guardado\");",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"demo@test.com\",\n  \"password\": \"Pass123!\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/Auth/login",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Auth",
+								"login"
+							]
+						},
+						"description": "Autentica un usuario y genera un token JWT válido por 24 horas. El token se guarda automáticamente en la variable {{token}}."
+					},
+					"response": []
+				},
+				{
+					"name": "HttpFactory - API Externa",
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -23,44 +109,40 @@
 								}
 							]
 						},
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json",
-								"type": "text"
-							},
-							{
-								"key": "",
-								"value": "",
-								"type": "text",
-								"disabled": true
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"nombreObra\": \"Mirador  \",\n  \"ubicacion\": \"Av. Principal 56\",\n  \"fechaInicio\": \"2025-01-01T00:00:00\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
+						"method": "GET",
+						"header": [],
 						"url": {
-							"raw": "{{url}}/Proyectos",
+							"raw": "{{url}}/HttpFactory",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
-								"Proyectos"
+								"HttpFactory"
 							]
-						}
+						},
+						"description": "🌐 Consume la API externa JSONPlaceholder usando el patrón HttpClientFactory. Retorna 10 usuarios de prueba."
 					},
 					"response": []
-				},
+				}
+			],
+			"description": "Endpoints de autenticación y demostración de consumo de API externa"
+		},
+		{
+			"name": "Proyectos",
+			"item": [
 				{
 					"name": "All Proyectos",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
@@ -71,7 +153,8 @@
 							"path": [
 								"Proyectos"
 							]
-						}
+						},
+						"description": "Obtiene todos los proyectos del usuario autenticado. Solo retorna proyectos donde userId coincide con el token JWT."
 					},
 					"response": []
 				},
@@ -91,20 +174,64 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{url}}/Proyectos/5001",
+							"raw": "{{url}}/Proyectos/1",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Proyectos",
-								"5001"
+								"1"
 							]
-						}
+						},
+						"description": "Obtiene un proyecto específico por ID. Retorna 404 si no existe o no pertenece al usuario."
 					},
 					"response": []
 				},
 				{
-					"name": "Update Proyecto",
+					"name": "Create Proyecto",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nombreObra\": \"Centro Comercial Mirador\",\n  \"ubicacion\": \"Av. Principal 123\",\n  \"fechaInicio\": \"2025-01-01T00:00:00\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/Proyectos",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Proyectos"
+							]
+						},
+						"description": "Crea un nuevo proyecto asignado automáticamente al usuario autenticado."
+					},
+					"response": []
+				},
+				{
+					"name": "Update Proyecto (PUT)",
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -117,10 +244,16 @@
 							]
 						},
 						"method": "PUT",
-						"header": [],
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
 						"body": {
 							"mode": "raw",
-							"raw": "{ \n  \"proyectoID\": 5001,\n  \"nombreObra\": \"Construcción Edificio Central - Actualizado\",\n  \"ubicacion\": \"Av. Principal 456\",\n  \"fechaInicio\": \"2025-02-01T00:00:00\"\n}\n",
+							"raw": "{ \n  \"proyectoID\": 1,\n  \"nombreObra\": \"Construcción Edificio Central - Actualizado\",\n  \"ubicacion\": \"Av. Principal 456\",\n  \"fechaInicio\": \"2025-02-01T00:00:00\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -128,21 +261,32 @@
 							}
 						},
 						"url": {
-							"raw": "{{url}}/Proyectos/5001",
+							"raw": "{{url}}/Proyectos/1",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Proyectos",
-								"5001"
+								"1"
 							]
-						}
+						},
+						"description": "Actualiza todos los campos de un proyecto. Solo el propietario puede actualizarlo (403 si no)."
 					},
 					"response": []
 				},
 				{
-					"name": "Update Proyecto Parcial",
+					"name": "Update Proyecto Parcial (PATCH)",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "PATCH",
 						"header": [
 							{
@@ -153,7 +297,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"nombreObra\": \"Nuevo Nombre del Proyecto\"\n}\n",
+							"raw": "{\n  \"ubicacion\": \"Nueva ubicación actualizada\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -161,38 +305,50 @@
 							}
 						},
 						"url": {
-							"raw": "{{url}}/Proyectos/5001",
+							"raw": "{{url}}/Proyectos/1",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Proyectos",
-								"5001"
+								"1"
 							]
-						}
+						},
+						"description": "Actualiza solo los campos especificados del proyecto. Todos los campos son opcionales."
 					},
 					"response": []
 				},
 				{
-					"name": "Proyecto",
+					"name": "Delete Proyecto",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{url}}/Proyectos/5001",
+							"raw": "{{url}}/Proyectos/1",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Proyectos",
-								"5001"
+								"1"
 							]
-						}
+						},
+						"description": "Elimina un proyecto y todas sus estimaciones y avances asociados (cascada). Solo el propietario puede eliminarlo."
 					},
 					"response": []
 				},
 				{
-					"name": "Desviación Presupuestal",
+					"name": "Desviación Presupuestal (Algoritmo)",
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -207,104 +363,22 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{url}}/Proyectos/Desviacion/5001",
+							"raw": "{{url}}/Proyectos/Desviacion/1",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Proyectos",
 								"Desviacion",
-								"5001"
+								"1"
 							]
-						}
+						},
+						"description": "🎯 Calcula la desviación presupuestal usando la fórmula EAC. Proyecta el costo final y clasifica el riesgo: BAJO (≤0%), MEDIO (0-5%), ALTO (>5%)."
 					},
 					"response": []
 				}
-			]
-		},
-		{
-			"name": "Auth",
-			"item": [
-				{
-					"name": "Register",
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"name\": \" Maria\",\n  \"email\": \"maria@example.com\",\n  \"password\": \"maria123\"\n}\n",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{url}}/Auth/register",
-							"host": [
-								"{{url}}"
-							],
-							"path": [
-								"Auth",
-								"register"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Login",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"email\": \"maria@example.com\",\n  \"password\": \"maria123\"\n}\n",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "http://localhost:5000/api/Auth/login",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "5000",
-							"path": [
-								"api",
-								"Auth",
-								"login"
-							]
-						}
-					},
-					"response": []
-				}
-			]
+			],
+			"description": "CRUD completo de proyectos con validación de ownership. Incluye análisis algorítmico de desviación financiera."
 		},
 		{
 			"name": "Estimaciones",
@@ -332,7 +406,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"concepto\": \"Cimentación\",\n  \"montoEstimado\": 50000.00,\n  \"proyectoID\": 5002\n}\n",
+							"raw": "{\n  \"concepto\": \"Cimentación\",\n  \"montoEstimado\": 50000.00,\n  \"proyectoID\": 1\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -347,20 +421,42 @@
 							"path": [
 								"Estimaciones"
 							]
-						}
+						},
+						"description": "Crea una nueva estimación de costo para un proyecto. El proyecto debe pertenecer al usuario autenticado."
 					},
 					"response": []
 				},
 				{
-					"name": "GET Estimación by ID",
+					"name": "Estimación by ID",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
-						"header": []
+						"header": [],
+						"url": {
+							"raw": "{{url}}/Estimaciones/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Estimaciones",
+								"1"
+							]
+						},
+						"description": "Obtiene una estimación específica por ID con todos sus avances asociados."
 					},
 					"response": []
 				},
 				{
-					"name": "PUT Update Estimación",
+					"name": "Update Estimación (PUT)",
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -382,7 +478,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"costoID\": 5002,\n  \"concepto\": \"Cimentación Reforzada\",\n  \"montoEstimado\": 55000.00,\n  \"proyectoID\": 5002\n}\n",
+							"raw": "{\n  \"costoID\": 1,\n  \"concepto\": \"Cimentación Reforzada\",\n  \"montoEstimado\": 55000.00,\n  \"proyectoID\": 1\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -390,20 +486,21 @@
 							}
 						},
 						"url": {
-							"raw": "{{url}}/Estimaciones/5002",
+							"raw": "{{url}}/Estimaciones/1",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Estimaciones",
-								"5002"
+								"1"
 							]
-						}
+						},
+						"description": "Actualiza todos los campos de una estimación. Solo el propietario del proyecto puede actualizarla."
 					},
 					"response": []
 				},
 				{
-					"name": "Update Estimación Parcial",
+					"name": "Update Estimación Parcial (PATCH)",
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -425,7 +522,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"montoEstimado\": 60000.00\n}\n",
+							"raw": "{\n  \"montoEstimado\": 60000.00\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -433,20 +530,21 @@
 							}
 						},
 						"url": {
-							"raw": "{{url}}/Estimaciones/5002",
+							"raw": "{{url}}/Estimaciones/1",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Estimaciones",
-								"5002"
+								"1"
 							]
-						}
+						},
+						"description": "Actualiza solo los campos especificados de la estimación."
 					},
 					"response": []
 				},
 				{
-					"name": "DELETE Estimación",
+					"name": "Delete Estimación",
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -461,52 +559,21 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{url}}/Estimaciones/5002\n",
+							"raw": "{{url}}/Estimaciones/1",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Estimaciones",
-								"5002\n"
+								"1"
 							]
-						}
+						},
+						"description": "Elimina una estimación. Falla con 400 si tiene avances registrados."
 					},
 					"response": []
 				}
-			]
-		},
-		{
-			"name": "API Externa",
-			"item": [
-				{
-					"name": "GET HttpFactory - Consumir JSONPlaceholder",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{url}}/HttpFactory",
-							"host": [
-								"{{url}}"
-							],
-							"path": [
-								"HttpFactory"
-							]
-						},
-						"description": "Consume la API externa JSONPlaceholder para obtener usuarios. Demuestra el patrón HttpClientFactory para consumo optimizado de APIs externas."
-					},
-					"response": []
-				}
-			]
+			],
+			"description": "CRUD completo de estimaciones de costo con validaciones FluentValidation"
 		},
 		{
 			"name": "Avances",
@@ -534,7 +601,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"montoEjecutado\": 15000.00,\n  \"porcentajeCompletado\": 30.0,\n  \"costoID\": 5003\n}\n",
+							"raw": "{\n  \"montoEjecutado\": 15000.00,\n  \"porcentajeCompletado\": 30.0,\n  \"costoID\": 1\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -549,7 +616,8 @@
 							"path": [
 								"Avances"
 							]
-						}
+						},
+						"description": "Registra un nuevo avance de obra. El porcentaje debe estar entre 0 y 100."
 					},
 					"response": []
 				},
@@ -576,7 +644,8 @@
 							"path": [
 								"Avances"
 							]
-						}
+						},
+						"description": "Obtiene todos los avances de obra con sus estimaciones asociadas."
 					},
 					"response": []
 				},
@@ -596,15 +665,16 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{url}}/Avances/4001",
+							"raw": "{{url}}/Avances/1",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Avances",
-								"4001"
+								"1"
 							]
-						}
+						},
+						"description": "Obtiene un avance específico por ID con su estimación y proyecto asociado."
 					},
 					"response": []
 				},
@@ -624,21 +694,22 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{url}}/Avances/porEstimacion/4001",
+							"raw": "{{url}}/Avances/porEstimacion/1",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Avances",
 								"porEstimacion",
-								"4001"
+								"1"
 							]
-						}
+						},
+						"description": "Obtiene todos los avances asociados a una estimación específica."
 					},
 					"response": []
 				},
 				{
-					"name": "Update Avance",
+					"name": "Update Avance (PUT)",
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -660,7 +731,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"avanceID\": 4001,\n  \"montoEjecutado\": 18000.00,\n  \"porcentajeCompletado\": 35.0\n}\n",
+							"raw": "{\n  \"avanceID\": 1,\n  \"montoEjecutado\": 18000.00,\n  \"porcentajeCompletado\": 35.0\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -668,20 +739,21 @@
 							}
 						},
 						"url": {
-							"raw": "{{url}}/Avances/4001",
+							"raw": "{{url}}/Avances/1",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Avances",
-								"4001"
+								"1"
 							]
-						}
+						},
+						"description": "Actualiza todos los campos de un avance."
 					},
 					"response": []
 				},
 				{
-					"name": "Update Avance Parcial",
+					"name": "Update Avance Parcial (PATCH)",
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -703,7 +775,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"porcentajeCompletado\": 40.0\n}\n",
+							"raw": "{\n  \"porcentajeCompletado\": 40.0\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -711,27 +783,50 @@
 							}
 						},
 						"url": {
-							"raw": "{{url}}/Avances/4001",
+							"raw": "{{url}}/Avances/1",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
 								"Avances",
-								"4001"
+								"1"
 							]
-						}
+						},
+						"description": "Actualiza solo los campos especificados del avance."
 					},
 					"response": []
 				},
 				{
-					"name": "Avance",
+					"name": "Delete Avance",
 					"request": {
-						"method": "GET",
-						"header": []
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/Avances/1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"Avances",
+								"1"
+							]
+						},
+						"description": "Elimina un avance de obra."
 					},
 					"response": []
 				}
-			]
+			],
+			"description": "CRUD completo de avances de obra con validación de porcentajes (0-100)"
 		}
 	],
 	"auth": {
@@ -750,7 +845,6 @@
 			"script": {
 				"type": "text/javascript",
 				"packages": {},
-				"requests": {},
 				"exec": [
 					""
 				]
@@ -761,7 +855,6 @@
 			"script": {
 				"type": "text/javascript",
 				"packages": {},
-				"requests": {},
 				"exec": [
 					""
 				]
@@ -771,23 +864,28 @@
 	"variable": [
 		{
 			"key": "url",
-			"value": ""
+			"value": "http://localhost:5000/api",
+			"type": "string"
 		},
 		{
 			"key": "token",
-			"value": ""
+			"value": "",
+			"type": "string"
 		},
 		{
 			"key": "proyectoId",
-			"value": ""
+			"value": "",
+			"type": "string"
 		},
 		{
 			"key": "estimacionId",
-			"value": ""
+			"value": "",
+			"type": "string"
 		},
 		{
 			"key": "avanceId",
-			"value": ""
+			"value": "",
+			"type": "string"
 		}
 	]
 }
