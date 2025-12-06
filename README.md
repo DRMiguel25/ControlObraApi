@@ -8,8 +8,27 @@
 
 ---
 
+## 🎬 Video Demostrativo
+
+[![Video Demo](https://img.shields.io/badge/YouTube-Video_Demo-FF0000?logo=youtube)](https://youtu.be/MZo66JklP2A)
+
+**Ver demostración completa de los endpoints principales:**
+
+[![ControlObraApi Demo](https://img.youtube.com/vi/MZo66JklP2A/0.jpg)](https://youtu.be/MZo66JklP2A)
+
+👆 *Click en la imagen para ver el video en YouTube*
+
+**Endpoints demostrados:**
+- ✅ Login y Registro (JWT + BCrypt)
+- ✅ CRUD de Proyectos con sistema multi-usuario (Ownership)
+- ✅ Análisis de Desviación Financiera
+- ✅ Consumo de API Externa (HttpClientFactory)
+
+---
+
 ## 📋 Tabla de Contenidos
 
+- [**🎬 Video Demostrativo**](#-video-demostrativo)
 - [Descripción](#-descripción)
 - [**🆕 Nuevas Características v2.0**](#-nuevas-características-v20)
 - [Características Principales](#-características-principales)

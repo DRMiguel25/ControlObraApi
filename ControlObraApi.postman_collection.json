@@ -476,6 +476,39 @@
 			]
 		},
 		{
+			"name": "API Externa",
+			"item": [
+				{
+					"name": "GET HttpFactory - Consumir JSONPlaceholder",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/HttpFactory",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"HttpFactory"
+							]
+						},
+						"description": "Consume la API externa JSONPlaceholder para obtener usuarios. Demuestra el patrón HttpClientFactory para consumo optimizado de APIs externas."
+					},
+					"response": []
+				}
+			]
+		},
+		{
 			"name": "Avances",
 			"item": [
 				{
